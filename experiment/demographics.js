@@ -88,4 +88,66 @@ const consent_form = {
     },
 }
 
-// Demographics ========================================================
+// Demographic info ========================================================================
+var demographics_questions = {
+    type: jsPsychSurvey,
+    survey_json: {
+        title: "About yourself",
+        completeText: "Continue",
+        pageNextText: "Next",
+        pagePrevText: "Previous",
+        goNextPageAutomatic: false,
+        showQuestionNumbers: false,
+        pages: [
+            {
+                elements: [
+                    {
+                        title: "What is your gender?",
+                        name: "Gender",
+                        type: "radiogroup",
+                        choices: ["Male", "Female"],
+                        showOtherItem: true,
+                        otherText: "Other",
+                        otherPlaceholder: "Please specify",
+                        isRequired: true,
+                        colCount: 0,
+                    },
+                    {
+                        type: "text",
+                        title: "Please enter your age (in years)",
+                        name: "Age",
+                        isRequired: true,
+                        inputType: "number",
+                        min: 0,
+                        max: 100,
+                        placeholder: "e.g., 21",
+                    },
+                    {
+                        title: "How would you describe your ethnicity?",
+                        name: "Ethnicity",
+                        type: "radiogroup",
+                        choices: [
+                            "White",
+                            "Black",
+                            "Hispanic/Latino",
+                            "Middle Eastern/North African",
+                            "South Asian",
+                            "East Asian",
+                            "Southeast Asian",
+                            "Mixed",
+                            "Prefer not to say",
+                        ],
+                        showOtherItem: true,
+                        otherText: "Other",
+                        otherPlaceholder: "Please specify",
+                        isRequired: false,
+                        colCount: 1,
+                    },
+                ],
+            },
+        ],
+    },
+    data: {
+        screen: "demographic_questions",
+    },
+}
