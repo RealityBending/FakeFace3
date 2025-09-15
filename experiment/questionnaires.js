@@ -226,30 +226,32 @@ const questionnaire_MIST = {
     },
 }
 
-// Bullshit receptive scale
+// Bullshit receptive scale (BRS)
 // Pennycook et al., 2015
 // https://doi:10.1017/S1930297500006999
 
-const BS_items = {
-    BS_1: "Hidden meaning transforms unparalleled abstract beauty",
-    BS_2: "Good health imparts reality to subtle creativity",
-    BS_3: "Wholeness quiets infinite phenomena",
-    BS_4: "The future explains irrational facts",
-    BS_5: "Imagination is inside exponential space time events",
-    BS_6: "We are in the midst of a self-aware blossoming of being that will align us with the nexus itself",
-    BS_7: "Consciousness consists of frequencies of quantum energy. “Quantum” means an unveiling of the unrestricted",
-    BS_8: "Consciousness is the growth of coherence, and of us",
-    BS_9: "We are in the midst of a high-frequency blossoming of interconnectedness that will give us access to the quantum soup itself",
-    BS_10: "Today, science tells us that the essence of nature is joy",
+const BRS_items = {
+    BRS_1: "Hidden meaning transforms unparalleled abstract beauty",
+    BRS_2: "Good health imparts reality to subtle creativity",
+    BRS_3: "Wholeness quiets infinite phenomena",
+    BRS_4: "The future explains irrational facts",
+    BRS_5: "Imagination is inside exponential space time events",
+    BRS_6: "We are in the midst of a self-aware blossoming of being that will align us with the nexus itself",
+    BRS_7: "Consciousness consists of frequencies of quantum energy. “Quantum” means an unveiling of the unrestricted",
+    BRS_8: "Consciousness is the growth of coherence, and of us",
+    BRS_9: "We are in the midst of a high-frequency blossoming of interconnectedness that will give us access to the quantum soup itself",
+    BRS_10: "Today, science tells us that the essence of nature is joy",
+    BRS_Attention:
+        "Wholeness is found in simple choices, select all the way to the right to show you are paying attention",
 }
 
-function make_BS(items) {
+function make_BRS(items) {
     items = shuffleObject(items)
 
     questions = [
         {
             type: "html",
-            name: "BS_instructions",
+            name: "BRS_instructions",
             html: "TWe are interested in how people experience the profound. Below are a series of statements taken from relevant websites. Please read each statement and take a moment to think about what it might mean. Then please rate how “profound” you think it is. Profound means “of deep meaning; of great and broadly inclusive significance.",
         },
     ]
@@ -275,17 +277,17 @@ function make_BS(items) {
     ]
 }
 
-const questionnaire_BS = {
+const questionnaire_BRS = {
     type: jsPsychSurvey,
     survey_json: function () {
         return {
             title: "Profound Experiences",
             showQuestionNumbers: false,
             goNextPageAutomatic: true,
-            pages: make_BS(BS_items),
+            pages: make_BRS(BRS_items),
         }
     },
     data: {
-        screen: "questionnaire_BS",
+        screen: "questionnaire_BRS",
     },
 }
