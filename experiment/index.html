@@ -37,6 +37,7 @@
 
         <!-- Custom scripts -->
         <script src="questionnaires.js"></script>
+        <script src="demographics.js"></script>
 
         <!-- CSS -->
 
@@ -70,10 +71,14 @@
         // Initialize timeline ---------------------------------------------------
         var timeline = []
 
+        // Consent -----------------------------------------------------------
+        timeline.push(consent_form)
+        // Questionnaires -------------------------------------------------------
+
         // timeline.push(questionnaires_instructions)
         // timeline.push(questionnaire_bait)
         // timeline.push(questionnaire_MIST)
-        timeline.push(questionnaire_BS)
+        timeline.push(questionnaire_BRS)
 
         // Run the timeline -------------------------------------------------------
         jsPsych.run(timeline)
