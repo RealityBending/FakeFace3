@@ -205,7 +205,7 @@ const experiment_feedback = {
     },
 }
 
-var demographics_debriefing = {
+const demographics_debriefing = {
     type: jsPsychSurvey,
     survey_json: {
         showQuestionNumbers: false,
@@ -234,5 +234,34 @@ We apologize for the necessary deception used in the instructions (as there were
     },
     data: {
         screen: "demographics_debrief",
+    },
+}
+
+const demographics_endscreen = {
+    type: jsPsychSurvey,
+    survey_json: function () {
+        text =
+            "<h2 style='color:green;'>Data saved successfully!</h2>" +
+            "<p>Thank you for participating, it means a lot to us.</p>"
+
+        // Return survey
+        return {
+            showQuestionNumbers: false,
+            completeText: "End",
+            pages: [
+                {
+                    elements: [
+                        {
+                            type: "html",
+                            name: "Endscreen",
+                            html: text,
+                        },
+                    ],
+                },
+            ],
+        }
+    },
+    data: {
+        screen: "demographics_endscreen",
     },
 }

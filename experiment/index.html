@@ -70,8 +70,10 @@
 
         // Initialize timeline ---------------------------------------------------
         var timeline = []
+        participant_ID = jsPsych.randomization.randomID(10)
 
         // Consent -----------------------------------------------------------
+        timeline.push(fullscreen_on) // Enter fullscreen mode
         // timeline.push(consent_form)
 
         // Demographics -------------------------------------------------------
@@ -85,6 +87,19 @@
         // End of experiment -------------------------------------------------
         timeline.push(experiment_feedback)
         timeline.push(demographics_debriefing)
+
+        // Save data via DataPipe ====================================================
+        // timeline.push({
+        //     type: jsPsychPipe,
+        //     action: "save",
+        //     experiment_id: "", // This is generated in the DataPipe interface
+        //     filename: `${participant_ID}.csv`,
+        //     data_string: () => jsPsych.data.get().csv(),
+        // })
+
+        // Exit fullscreen mode
+        timeline.push(fullscreen_off)
+        timeline.push(demographics_endscreen)
 
         // Run the timeline -------------------------------------------------------
         jsPsych.run(timeline)
