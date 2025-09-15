@@ -49,7 +49,6 @@ selection <- dat |>
 
 selection
 
-
 dat |>
   mutate(Selected = ifelse(Stimulus %in% selection$Stimulus, "yes", "no")) |>
   ggplot(aes(x = Mean, y = SD, color = face_sex)) +
@@ -57,3 +56,31 @@ dat |>
   geom_text(data = selection, aes(label = Stimulus), vjust = -1) +
   facet_wrap(~rater_sex) +
   scale_shape_manual(values = c(3, 16))
+
+#===============================================================================
+
+# Remove "X" prefix from Stimulus IDs
+selection <- selection |>
+  mutate(Stimulus = str_remove(Stimulus, "^X"))
+
+
+# Save selection and its characteristics
+write.csv(selection, "stimuli_data.csv", row.names = FALSE)
+
+json <- selection |> 
+  select(Stimulus, rater_sex, rater_sexpref, face_sex) |> 
+  jsonlite::toJSON()
+
+write(paste("var stimuli_list = ", json), "stimuli_list.js")
+
+# Path to the neutral images
+path_london <- "C:/Users/asf25/Box/Databases/Faces/London/neutral_front/"
+
+# Remove all current files
+unlink("../stimuli/*")
+# 
+# Copy each file
+for (id in selection$Stimulus) {
+  file.copy(paste0(path_london, id, "_03.jpg"), "../stimuli/")
+}
+
