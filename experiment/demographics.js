@@ -67,7 +67,7 @@ const consent_form = {
         // End
         text +=
             "<li align='left'>By participating, you agree to follow the instructions and provide honest answers. If you do not wish to participate or if you don't have the time, simply close your browser.</li></p>" +
-            "<p align='left'><br><sub><sup>For further information about this research, or if you have any concerns, please contact Dr Reny Baykova (<i style='color:DodgerBlue;'>R.Baykova@sussex.ac.uk</i>), and/or Dr Dominique Makowski (<i style='color:DodgerBlue;'>D.Makowski@sussex.ac.uk</i>) and/or Dr Danielle Evans (<i style='color:DodgerBlue;'>d.evans@sussex.ac.uk</i>) and/or Prof Andy Field (<i style='color:DodgerBlue;'>Andy.Field@sussex.ac.uk</i>). This research has been approved (xx/xxx/x) by the Sciences & Technology Cross-Schools Research Ethics Committee (C-REC) (<i style='color:DodgerBlue;'>crecscitec@sussex.ac.uk</i>). The University of Sussex has insurance in place to cover its legal liabilities in respect of this study.</sup></sub></p>"
+            "<p align='left'><br><sub><sup>For further information about this research, or if you have any concerns, please contact Dr Reny Baykova (<i style='color:DodgerBlue;'>R.Baykova@sussex.ac.uk</i>), and/or Dr Dominique Makowski (<i style='color:DodgerBlue;'>D.Makowski@sussex.ac.uk</i>) and/or Dr Danielle Evans (<i style='color:DodgerBlue;'>D.evans@sussex.ac.uk</i>) and/or Prof Andy Field (<i style='color:DodgerBlue;'>Andy.Field@sussex.ac.uk</i>). This research has been approved (xx/xxx/x) by the Sciences & Technology Cross-Schools Research Ethics Committee (C-REC) (<i style='color:DodgerBlue;'>crecscitec@sussex.ac.uk</i>). The University of Sussex has insurance in place to cover its legal liabilities in respect of this study.</sup></sub></p>"
 
         // Return Survey
         return {
@@ -89,7 +89,7 @@ const consent_form = {
 }
 
 // Demographic info ========================================================================
-var demographics_questions = {
+const demographics_questions = {
     type: jsPsychSurvey,
     survey_json: {
         title: "About yourself",
@@ -149,5 +149,90 @@ var demographics_questions = {
     },
     data: {
         screen: "demographic_questions",
+    },
+}
+
+// Thank you ========================================================================
+
+const experiment_feedback = {
+    type: jsPsychSurvey,
+    survey_json: {
+        title: "Feedback",
+        description:
+            "It is the end of the experiment! Don't hesitate to leave us a feedback.",
+        completeText: "Next",
+        showQuestionNumbers: false,
+        pages: [
+            {
+                elements: [
+                    {
+                        type: "html",
+                        name: "Feedback_Alert",
+                        html: "<p><b style='color:red;'>Answers to these questions will not affect your reward but will help us to better understand your answers.</b></p>",
+                    },
+                    {
+                        type: "rating",
+                        name: "Feedback_Enjoyment",
+                        title: "Did you enjoy doing this experiment?",
+                        isRequired: false,
+                        rateMin: 0,
+                        rateMax: 4,
+                        rateType: "stars",
+                    },
+                    {
+                        type: "rating",
+                        name: "Feedback_Quality",
+                        title: "To what extent did you do the experiment carefully and thoroughly?",
+                        description: "Please be honest!",
+                        isRequired: false,
+                        rateMin: 0,
+                        rateMax: 4,
+                    },
+                    {
+                        type: "comment",
+                        name: "Feedback_Text",
+                        title: "Anything else you would like to share with us?",
+                        description:
+                            "Please note that these comments might be shared publicly as part of the results of this study - avoid sharing personal information.",
+                        isRequired: false,
+                    },
+                ],
+            },
+        ],
+    },
+    data: {
+        screen: "experiment_feedback",
+    },
+}
+
+var demographics_debriefing = {
+    type: jsPsychSurvey,
+    survey_json: {
+        showQuestionNumbers: false,
+        completeText: "Continue",
+        pages: [
+            {
+                elements: [
+                    {
+                        type: "html",
+                        name: "Debrief",
+                        html: `
+<img src='https://blogs.brighton.ac.uk/sussexwrites/files/2019/06/University-of-Sussex-logo-transparent.png' width='150px' align='right'/><br><br><br><br><br>
+<h3>Debriefing</h3>
+<p align='left'>
+The purpose of this study was actually to study the effect on perceived attractiveness and trustworthiness of <i>believing</i> that the content is fake (AI-generated or real).
+Our hypothesis is that believing that something is AI-generated would lead to lower attraction and trustworthiness ratings.
+As we are primarily interested in your <i>beliefs</i> about reality, <b>all images were in fact taken from an existing database of real paintings</b> used in psychology research to study aesthetic judgments.
+We apologize for the necessary deception used in the instructions (as there were no AI-generated images!), and we hope that you understand its role in ensuring the validity of our experiment.</p>
+<p align='left'><b>Thank you again!</b> Your participation in this study will be kept completely confidential. If you have any questions or concerns about the project, please contact D.Makowski@sussex.ac.uk. and/or R.Baykova@sussex.ac.uk and/or D.evans@sussex.ac.uk. </p>
+<p>To complete your participation in this study, click on 'Continue' and <b style="color: red">wait until your responses have been successfully saved</b> before closing the tab.</p> 
+                            `,
+                    },
+                ],
+            },
+        ],
+    },
+    data: {
+        screen: "demographics_debrief",
     },
 }

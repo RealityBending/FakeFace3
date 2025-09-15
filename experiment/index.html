@@ -72,15 +72,19 @@
         var timeline = []
 
         // Consent -----------------------------------------------------------
-        timeline.push(consent_form)
+        // timeline.push(consent_form)
 
         // Demographics -------------------------------------------------------
-        timeline.push(demographics_questions)
+        // timeline.push(demographics_questions)
         // Questionnaires -------------------------------------------------------
-        timeline.push(questionnaires_instructions)
-        timeline.push(questionnaire_bait)
-        timeline.push(questionnaire_MIST)
-        timeline.push(questionnaire_BRS)
+        // timeline.push(questionnaires_instructions)
+        // timeline.push(questionnaire_bait)
+        // timeline.push(questionnaire_MIST)
+        // timeline.push(questionnaire_BRS)
+
+        // End of experiment -------------------------------------------------
+        timeline.push(experiment_feedback)
+        timeline.push(demographics_debriefing)
 
         // Run the timeline -------------------------------------------------------
         jsPsych.run(timeline)
