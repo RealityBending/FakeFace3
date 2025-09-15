@@ -2,10 +2,13 @@ library(tidyverse)
 
 # Attractiveness ratings (on a 1-7 scale from "much less attractiveness than average" to "much more attractive than average") for the neutral front faces from 2513 people (ages 17-90) are included in the file london_faces_ratings.csv
 df <- read.csv(
-  "C:/Users/domma/Box/Databases/Faces/London/london_faces_ratings.csv"
+  # "C:/Users/domma/Box/Databases/Faces/London/london_faces_ratings.csv"
+  "C:/Users/asf25/Box/Databases/Faces/London/london_faces_ratings.csv"
+
 )
 info <- read.csv(
-  "C:/Users/domma/Box/Databases/Faces/London/london_faces_info.csv"
+  # "C:/Users/domma/Box/Databases/Faces/London/london_faces_info.csv"
+  "C:/Users/asf25/Box/Databases/Faces/London/london_faces_info.csv"
 ) |>
   select(Stimulus = face_id, face_sex)
 
