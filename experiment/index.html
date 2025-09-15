@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Title shown in tab -->
+        <title>Experiment</title>
+
+        <!-- Load JsPsych -->
+        <script src="https://unpkg.com/jspsych@8.2.2"></script>
+        <link
+            href="https://unpkg.com/jspsych@8.2.2/css/jspsych.css"
+            rel="stylesheet"
+            type="text/css"
+        />
+
+        <!-- Load plugins -->
+        <script src="https://unpkg.com/@jspsych/plugin-browser-check@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-preload@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-fullscreen@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-survey@3.0.0"></script>
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/@jspsych/plugin-survey@3.0.0/css/survey.css"
+        />
+
+        <!-- To save data via DataPipe (for online experiments) -->
+        <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe@0.5.0"></script>
+
+        <!-- Eye-tacking -->
+        <script src="https://cdn.jsdelivr.net/gh/jspsych/jspsych@jspsych@8.2.2/examples/js/webgazer/webgazer.js"></script>
+        <script src="https://unpkg.com/@jspsych/extension-webgazer@1.2.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-webgazer-init-camera@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-webgazer-calibrate@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-webgazer-validate@2.1.0"></script>
+
+        <!-- Custom scripts -->
+        <script src="questionnaires.js"></script>
+
+        <!-- CSS -->
+
+        <style></style>
+    </head>
+
+    <body></body>
+
+    <script>
+        // Initialize experiment =================================================
+        var jsPsych = initJsPsych({
+            show_progress_bar: true,
+            message_progress_bar: "Progress",
+            // on_finish: function () {
+            //     // jsPsych.data.displayData("json") // Display data in browser
+            //     // window.location = "https://realitybending.github.io/" // Redirect to lab website
+            //     if (jsPsych.data.urlVariables()["exp"] == "SONA") {
+            //         window.location = "URM" + jsPsych.data.urlVariables()["sona_id"]
+            //     } else if (jsPsych.data.urlVariables()["exp"] == "prolific") {
+            //         d = jsPsych.data.get().filter({ screen: "demographics_debrief" })["trials"][0]
+            //         if (d["Reward"] == "Automatic") {
+            //             window.location = "https://app.prolific.com/submissions/complete?cc=C1FUNHUW" // Pass
+            //         } else {
+            //             window.location = "https://app.prolific.com/submissions/complete?cc=C1I3M32X" // Fail
+            //         }
+            //     }
+            // },
+            extensions: [{ type: jsPsychExtensionWebgazer }],
+        })
+
+        // Initialize timeline ---------------------------------------------------
+        var timeline = []
+
+        // timeline.push(questionnaires_instructions)
+        // timeline.push(questionnaire_bait)
+        // timeline.push(questionnaire_MIST)
+        timeline.push(questionnaire_BS)
+
+        // Run the timeline -------------------------------------------------------
+        jsPsych.run(timeline)
+    </script>
+</html>
