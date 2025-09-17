@@ -8,12 +8,12 @@ function shuffleArray(array) {
 }
 
 // Condition assignment ============================================
-function assignCondition(stimuli) {
-    new_stimuli_list = []
+function assignCondition(stimuli_list) {
+    let new_stimuli_list = []
     // Loop through unique categories
-    for (let cat of [...new Set(stimuli.map((a) => a.Category))]) {
+    for (let cat of [...new Set(stimuli_list.map((a) => a.Category))]) {
         // Get all stimuli of this category
-        var cat_stimuli = stimuli.filter((a) => a.Category == cat)
+        var cat_stimuli = stimuli_list.filter((a) => a.Category == cat)
 
         // Shuffle cat_stimuli
         cat_stimuli = shuffleArray(cat_stimuli) // Custom funciton defined above
@@ -44,10 +44,10 @@ var fiction_trialnumber = 1
 var color_cues = shuffleArray(["red", "blue", "green"])
 color_cues = { Reality: color_cues[0], Fiction: color_cues[1] }
 var text_cue = { Reality: "Photograph", Fiction: "AI-generated" }
-// stimuli = assignCondition(stimuli)
+stimuli = assignCondition(stimuli_list)
 
 // We make 6 catch trials (always starting from 2 = the first trial)
-// catch_trials = [2].concat(generateRandomNumbers(3, stimuli_list.length, 5))
+catch_trials = [2].concat(generateRandomNumbers(3, stimuli_list.length, 5))
 
 // Screens =====================================================================
 const fiction_instructions1 = {
@@ -68,7 +68,7 @@ const fiction_instructions1 = {
   <div style="text-align: left;">
    <p>This study stems out of an exciting new partnership between researchers from the <b>University of Sussex</b> and a young <b>AI startup</b> based in Brighton, UK, that specializes in making AI technology more ethical.</p>
    <p>Our goal is to better understand how various people react to different faces. 
-   For this, we will be using a new <b>image-generation algorithm</b> (based on a modified <i>Generative Adversarial Network</i>) trained on large dataset of images from the <b style="color: #e70ae7ff">Face Research Lab London Database</b> (DeBruine & Jones, 2017).</p>
+   For this, we will be using a new <b>image-generation algorithm</b> (based on a modified <i>Generative Adversarial Network</i>) trained on large dataset of images from the <b style="color: #e70ae7ff">Face Research Lab London Database</b> (DeBruine & Jones, 2024).</p>
    <p>The algorithm was prompted to generate faces based on the characteristics of the faces in the database which were in turn taken from real individuals living in London.</p>
    
    <div style='text-align: center;'><img src='media/gan.gif' height='200'></img></div>
@@ -101,8 +101,7 @@ const fiction_instructions1 = {
     </div>
     <p>Note that we are interested in your <b>first impression</b>, so please respond according to your gut feelings.</p>
     <p>Press start once you are ready.</p>
-    </div>
-`,
+    </div>`,
                     },
                 ],
             },
@@ -146,4 +145,358 @@ const fiction_instructions2 = {
             },
         ],
     },
+}
+
+var fiction_preloadstims = {
+    type: jsPsychPreload,
+    images: stimuli_list.map((a) => "stimuli/" + a.Item),
+    message:
+        "Please wait while the experiment is being loaded (it can take a few minutes)",
+}
+
+var fiction_fixation1a = {
+    type: jsPsychHtmlKeyboardResponse,
+    // on_start: function () {
+    //     document.body.style.cursor = "none"
+    // },
+    stimulus:
+        "<div style='font-size:500%; position:fixed; text-align: center; top:50%; bottom:50%; right:20%; left:20%'>+</div>",
+    choices: ["s"],
+    trial_duration: 500,
+    save_trial_parameters: { trial_duration: true },
+    data: {
+        screen: "fiction_fixation1a",
+    },
+}
+
+var fiction_cue = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: function () {
+        var cond = jsPsych.evaluateTimelineVariable("Condition")
+        return (
+            "<div style='font-size:450%; position:fixed; text-align: center; top:50%; bottom:50%; right:20%; left:20%; color: " +
+            color_cues[cond] +
+            "'><b>" +
+            text_cue[cond] +
+            "</b></div>"
+        )
+    },
+    data: function () {
+        var cond = jsPsych.evaluateTimelineVariable("Condition")
+        return {
+            screen: "fiction_cue",
+            color: color_cues[cond],
+            condition: cond,
+            item: jsPsych.evaluateTimelineVariable("Item"),
+        }
+    },
+    choices: ["s"],
+    trial_duration: 1000,
+    save_trial_parameters: { trial_duration: true },
+}
+
+var fiction_fixation1b = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus:
+        "<div style='font-size:500%; position:fixed; text-align: center; top:50%; bottom:50%; right:20%; left:20%'>+</div>",
+    choices: ["s"],
+    trial_duration: 500,
+    save_trial_parameters: { trial_duration: true },
+    data: function () {
+        return {
+            screen: "fiction_fixation1b",
+            item: jsPsych.evaluateTimelineVariable("Item"),
+            window_width: window.innerWidth,
+            window_height: window.innerHeight,
+        }
+    },
+}
+
+var fiction_showimage1 = {
+    type: jsPsychImageKeyboardResponse,
+    stimulus: function () {
+        return "stimuli/" + jsPsych.evaluateTimelineVariable("Item")
+    },
+    stimulus_width: function () {
+        let ratio =
+            jsPsych.evaluateTimelineVariable("Width") /
+            jsPsych.evaluateTimelineVariable("Height")
+        return Math.round(
+            Math.min(0.9 * window.innerHeight * ratio, 0.9 * window.innerWidth)
+        )
+    },
+
+    stimulus_height: function () {
+        let ratio =
+            jsPsych.evaluateTimelineVariable("Width") /
+            jsPsych.evaluateTimelineVariable("Height")
+        return Math.round(
+            Math.min(
+                (0.9 * window.innerWidth) / ratio,
+                0.9 * window.innerHeight
+            )
+        )
+    },
+    trial_duration: 5000,
+    choices: ["s"],
+    save_trial_parameters: { trial_duration: true },
+    data: function () {
+        return {
+            screen: "fiction_image1",
+            item: jsPsych.evaluateTimelineVariable("Item"),
+            window_width: window.innerWidth,
+            window_height: window.innerHeight,
+            trial_number: fiction_trialnumber,
+        }
+    },
+    on_finish: function () {
+        fiction_trialnumber += 1
+    },
+}
+
+fiction_scales1 = [
+    {
+        type: "rating",
+        name: "Attractiveness",
+        title: "How attractive is this face to you?",
+        isRequired: true,
+        rateMin: 0,
+        rateMax: 6,
+        minRateDescription: "Very unattractive",
+        maxRateDescription: "Very attractive",
+        displayMode: "buttons",
+        // defaultValue: 0,
+    },
+    {
+        type: "rating",
+        name: "Beauty",
+        title: "I find this face beautiful.",
+        isRequired: true,
+        rateMin: 0,
+        rateMax: 6,
+        minRateDescription: "Strongly disagree",
+        maxRateDescription: "Strongly agree",
+        displayMode: "buttons",
+    },
+    {
+        type: "rating",
+        name: "Trustworthiness",
+        title: "I find this face trustworthy.",
+        isRequired: true,
+        rateMin: 0,
+        rateMax: 6,
+        minRateDescription: "Strongly disagree",
+        maxRateDescription: "Strongly agree",
+        displayMode: "buttons",
+    },
+]
+
+var fiction_ratings1 = {
+    type: jsPsychSurvey,
+    survey_json: {
+        goNextPageAutomatic: true,
+        showQuestionNumbers: false,
+        showNavigationButtons: false,
+        title: function () {
+            return (
+                "Rating - " +
+                Math.round(((fiction_trialnumber - 1) / stimuli.length) * 100) +
+                "%"
+            )
+        },
+        description: "Think of the person that you just saw. ",
+        pages: [{ elements: fiction_scales1 }],
+    },
+    data: {
+        screen: "fiction_ratings1",
+    },
+}
+
+var fiction_ratings1_check = {
+    type: jsPsychSurvey,
+    survey_json: {
+        goNextPageAutomatic: true,
+        showQuestionNumbers: false,
+        showNavigationButtons: false,
+        title: function () {
+            return (
+                "Rating - " +
+                Math.round(((fiction_trialnumber - 1) / stimuli.length) * 100) +
+                "%"
+            )
+        },
+        description: "Think of the person that you just saw. ",
+        pages: [
+            {
+                elements: fiction_scales1.concat([
+                    {
+                        title: "What was written in the previous screen?",
+                        name: "AttentionCheck",
+                        type: "radiogroup",
+                        choices: [
+                            "AI-Generated",
+                            "Photograph",
+                            "I don't remember",
+                        ],
+                        showOtherItem: false,
+                        isRequired: true,
+                        colCount: 0,
+                    },
+                ]),
+            },
+        ],
+    },
+    data: {
+        screen: "fiction_ratings1_a",
+    },
+}
+
+// The rating screens are created as conditional timelines to allow for dynamic changes
+// (with or without the attention check question) depending on the trial number
+var t_fiction_ratings1_check = {
+    timeline: [fiction_ratings1_check],
+    conditional_function: function () {
+        if (catch_trials.includes(fiction_trialnumber)) {
+            return true
+        } else {
+            return false
+        }
+    },
+}
+
+var t_fiction_ratings1_nocheck = {
+    timeline: [fiction_ratings1],
+    conditional_function: function () {
+        if (catch_trials.includes(fiction_trialnumber)) {
+            return false
+        } else {
+            return true
+        }
+    },
+}
+
+var fiction_phase1 = {
+    timeline_variables: stimuli, // <---------------------------- TODO: remove the extra slicing added for testing
+    timeline: [
+        fiction_fixation1a,
+        fiction_cue,
+        fiction_fixation1b,
+        fiction_showimage1,
+        t_fiction_ratings1_check,
+        t_fiction_ratings1_nocheck,
+    ],
+}
+
+// Stage 2 loops and variables
+
+var fiction_fixation2 = {
+    type: jsPsychHtmlKeyboardResponse,
+    // on_start: function () {
+    //     document.body.style.cursor = "none"
+    // },
+    stimulus:
+        "<div  style='font-size:500%; position:fixed; text-align: center; top:50%; bottom:50%; right:20%; left:20%'>+</div>",
+    choices: ["s"],
+    trial_duration: 750,
+    save_trial_parameters: { trial_duration: true },
+    data: { screen: "fiction_fixation2" },
+}
+
+var fiction_showimage2 = {
+    type: jsPsychImageKeyboardResponse,
+    stimulus: function () {
+        return "stimuli/" + jsPsych.evaluateTimelineVariable("Item")
+    },
+    stimulus_width: function () {
+        let ratio =
+            jsPsych.evaluateTimelineVariable("Width") /
+            jsPsych.evaluateTimelineVariable("Height")
+        return Math.round(
+            Math.min(0.9 * window.innerHeight * ratio, 0.9 * window.innerWidth)
+        )
+    },
+
+    stimulus_height: function () {
+        let ratio =
+            jsPsych.evaluateTimelineVariable("Width") /
+            jsPsych.evaluateTimelineVariable("Height")
+        return Math.round(
+            Math.min(
+                (0.9 * window.innerWidth) / ratio,
+                0.9 * window.innerHeight
+            )
+        )
+    },
+    trial_duration: 1500,
+    choices: ["s"],
+    save_trial_parameters: { trial_duration: true },
+    data: function () {
+        return {
+            screen: "fiction_image2",
+            trial_number: fiction_trialnumber,
+            item: jsPsych.evaluateTimelineVariable("Item"),
+        }
+    },
+    on_finish: function () {
+        fiction_trialnumber += 1
+    },
+}
+
+var fiction_ratings2 = {
+    type: jsPsychSurvey,
+    survey_json: {
+        goNextPageAutomatic: false,
+        showQuestionNumbers: false,
+        showNavigationButtons: true,
+        title: function () {
+            return (
+                "Rating - " +
+                Math.round(((fiction_trialnumber - 1) / stimuli.length) * 100) +
+                "%"
+            )
+        },
+        pages: [
+            {
+                elements: [
+                    {
+                        type: "html",
+                        name: "Instructions",
+                        html: "The labels we showed you in the previous phase have been mixed up! Can you tell to what category each image belongs?",
+                    },
+                    {
+                        type: "slider",
+                        name: "Reality",
+                        title: "I think this face is...", // "Indicate your confidence that the image is a human or AI creation"
+                        description:
+                            "Indicate your confidence that the image is fake or real",
+                        isRequired: true,
+                        // minWidth: "200%",
+                        // maxWidth: "200%",
+                        min: -100,
+                        max: 100,
+                        step: 1,
+                        customLabels: [
+                            {
+                                value: -100,
+                                text: " AI-generated",
+                            },
+                            {
+                                value: 100,
+                                text: "Photograph",
+                            },
+                        ],
+                        // defaultValue: 0,
+                    },
+                ],
+            },
+        ],
+    },
+    data: {
+        screen: "fiction_ratings2",
+    },
+}
+
+var fiction_phase2 = {
+    timeline_variables: shuffleArray(stimuli), //.slice(0, 2), // <------------------------------------------------------------------------ TODO: remove this
+    timeline: [fiction_fixation2, fiction_showimage2, fiction_ratings2],
 }
