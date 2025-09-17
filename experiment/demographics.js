@@ -102,12 +102,12 @@ const demographics_questions = {
             {
                 elements: [
                     {
-                        title: "What is your gender?",
+                        title: "How would you describe your gender",
                         name: "Gender",
                         type: "radiogroup",
                         choices: ["Male", "Female"],
                         showOtherItem: true,
-                        otherText: "Other",
+                        otherText: "In another way",
                         otherPlaceholder: "Please specify",
                         isRequired: true,
                         colCount: 0,
