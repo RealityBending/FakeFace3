@@ -41,9 +41,9 @@ selection <- dat |>
     .by = c("rater_sex", "face_sex")
   ) |>
   filter(
-    rank_low <= 2 | # 2 lowest
-      rank_high <= 2 | # 2 highest
-      rank_med <= 2 # 2 closest to median
+    rank_low <= 3| # 3 lowest
+      rank_high <= 3 | # 3 highest
+      rank_med <= 3 # 3 closest to median
   ) |>
   arrange(rater_sex, face_sex, Mean)
 
