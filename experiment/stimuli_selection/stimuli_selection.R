@@ -61,14 +61,14 @@ dat |>
 
 # Remove "X" prefix from Stimulus IDs
 selection <- selection |>
-  mutate(Stimulus = str_remove(Stimulus, "^X"))
+  mutate(Item = paste0(str_remove(Stimulus, "^X"), "_03.jpg"))
 
 
 # Save selection and its characteristics
 write.csv(selection, "stimuli_data.csv", row.names = FALSE)
 
 json <- selection |> 
-  select(Stimulus, rater_sex, rater_sexpref, face_sex) |> 
+  select(Item, rater_sex, rater_sexpref, face_sex) |> 
   jsonlite::toJSON()
 
 write(paste("var stimuli_list = ", json), "stimuli_list.js")
@@ -80,7 +80,7 @@ path_london <- "C:/Users/asf25/Box/Databases/Faces/London/neutral_front/"
 unlink("../stimuli/*")
 # 
 # Copy each file
-for (id in selection$Stimulus) {
-  file.copy(paste0(path_london, id, "_03.jpg"), "../stimuli/")
+for (id in selection$Item) {
+  file.copy(paste0(path_london, id), "../stimuli/")
 }
 
