@@ -28,16 +28,10 @@
         <!-- To save data via DataPipe (for online experiments) -->
         <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe@0.5.0"></script>
 
-        <!-- Eye-tacking -->
-        <script src="https://cdn.jsdelivr.net/gh/jspsych/jspsych@jspsych@8.2.2/examples/js/webgazer/webgazer.js"></script>
-        <script src="https://unpkg.com/@jspsych/extension-webgazer@1.2.0"></script>
-        <script src="https://unpkg.com/@jspsych/plugin-webgazer-init-camera@2.1.0"></script>
-        <script src="https://unpkg.com/@jspsych/plugin-webgazer-calibrate@2.1.0"></script>
-        <script src="https://unpkg.com/@jspsych/plugin-webgazer-validate@2.1.0"></script>
-
         <!-- Custom scripts -->
         <script src="questionnaires.js"></script>
         <script src="demographics.js"></script>
+        <script src="fiction.js"></script>
 
         <!-- CSS -->
 
@@ -65,7 +59,6 @@
             //         }
             //     }
             // },
-            extensions: [{ type: jsPsychExtensionWebgazer }],
         })
 
         // Initialize timeline ---------------------------------------------------
@@ -73,16 +66,26 @@
         participant_ID = jsPsych.randomization.randomID(10)
 
         // Consent -----------------------------------------------------------
-        timeline.push(fullscreen_on) // Enter fullscreen mode
+        // timeline.push(fullscreen_on) // Enter fullscreen mode
         // timeline.push(consent_form)
 
         // Demographics -------------------------------------------------------
+        // timeline.push(demographics_browser_info)
         // timeline.push(demographics_questions)
+
+        // Fiction Task
+        timeline.push(fiction_instructions1)
+
         // Questionnaires -------------------------------------------------------
-        // timeline.push(questionnaires_instructions)
-        // timeline.push(questionnaire_bait)
-        // timeline.push(questionnaire_MIST)
-        // timeline.push(questionnaire_BRS)
+        questionnaires = [
+            questionnaire_bait,
+            questionnaire_MIST,
+            questionnaire_BRS,
+        ]
+        questionnaires = jsPsych.randomization.shuffle(questionnaires) // Shuffle order of questionnaires
+
+        timeline.push(questionnaires_instructions)
+        timeline.push(...questionnaires)
 
         // End of experiment -------------------------------------------------
         timeline.push(experiment_feedback)
@@ -92,7 +95,7 @@
         // timeline.push({
         //     type: jsPsychPipe,
         //     action: "save",
-        //     experiment_id: "", // This is generated in the DataPipe interface
+        //     experiment_id: "3trOIIJGRBPV", // This is generated in the DataPipe interface
         //     filename: `${participant_ID}.csv`,
         //     data_string: () => jsPsych.data.get().csv(),
         // })
