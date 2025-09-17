@@ -73,14 +73,7 @@
 
         // Demographics -------------------------------------------------------
         // timeline.push(demographics_browser_info)
-        // timeline.push(demographics_questions)
-
-        // Fiction stage 1
-        timeline.push(fiction_instructions1)
-        timeline.push(fiction_phase1)
-
-        //Fiction stage 2
-        // timeline.push(fiction_instructions2)
+        timeline.push(demographics_questions)
 
         // Questionnaires -------------------------------------------------------
         questionnaires = [
@@ -92,6 +85,14 @@
 
         timeline.push(questionnaires_instructions)
         timeline.push(...questionnaires)
+
+        // Fiction stage 1
+        timeline.push(fiction_instructions1)
+        timeline.push(fiction_phase1)
+        timeline.push(fiction_feedback1)
+
+        //Fiction stage 2
+        // timeline.push(fiction_instructions2)
 
         // End of experiment -------------------------------------------------
         timeline.push(experiment_feedback)

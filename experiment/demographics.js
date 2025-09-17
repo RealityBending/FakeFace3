@@ -105,7 +105,7 @@ const demographics_questions = {
                         title: "How would you describe your gender",
                         name: "Gender",
                         type: "radiogroup",
-                        choices: ["Male", "Female"],
+                        choices: ["Male", "Female", "Prefer not to say"],
                         showOtherItem: true,
                         otherText: "In another way",
                         otherPlaceholder: "Please specify",
@@ -121,6 +121,19 @@ const demographics_questions = {
                         min: 0,
                         max: 100,
                         placeholder: "e.g., 21",
+                    },
+                    {
+                        title: "What sexual orientation do you identify with?",
+                        description:
+                            "These questions are important to understand the results in the latter part of the experiment.",
+                        name: "SexualOrientation",
+                        type: "radiogroup",
+                        choices: ["Heterosexual", "Homosexual", "Bisexual"],
+                        showOtherItem: true,
+                        otherText: "Other",
+                        otherPlaceholder: "Please specify",
+                        isRequired: true,
+                        colCount: 1,
                     },
                     {
                         title: "How would you describe your ethnicity?",
