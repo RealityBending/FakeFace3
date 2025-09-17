@@ -16,12 +16,27 @@ function assignCondition(stimuli_list) {
         var cat_stimuli = stimuli_list.filter((a) => a.Category == cat)
 
         // Shuffle cat_stimuli
-        cat_stimuli = shuffleArray(cat_stimuli) // Custom funciton defined above
+        cat_stimuli = shuffleArray(cat_stimuli)
 
-        // Assign half to "Reality" condition and half to "Fiction" condition
-        for (let i = 0; i < cat_stimuli.length; i++) {
-            cat_stimuli[i].Condition =
-                i < cat_stimuli.length / 2 ? "Reality" : "Fiction"
+        // Assign conditions
+        let conditions = ["Reality", "Fiction"]
+        let half = Math.floor(cat_stimuli.length / 2)
+        let remainder = cat_stimuli.length % 2
+
+        let index = 0
+        // First assign evenly
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < half; j++) {
+                cat_stimuli[index].Condition = conditions[i]
+                index++
+            }
+        }
+
+        // If odd number, assign the leftover randomly
+        if (remainder > 0) {
+            let shuffledConditions = shuffleArray(conditions)
+            cat_stimuli[index].Condition = shuffledConditions[0]
+            index++
         }
 
         // Add to new_stimuli_list
@@ -217,26 +232,6 @@ var fiction_showimage1 = {
     stimulus: function () {
         return "stimuli/" + jsPsych.evaluateTimelineVariable("Item")
     },
-    stimulus_width: function () {
-        let ratio =
-            jsPsych.evaluateTimelineVariable("Width") /
-            jsPsych.evaluateTimelineVariable("Height")
-        return Math.round(
-            Math.min(0.9 * window.innerHeight * ratio, 0.9 * window.innerWidth)
-        )
-    },
-
-    stimulus_height: function () {
-        let ratio =
-            jsPsych.evaluateTimelineVariable("Width") /
-            jsPsych.evaluateTimelineVariable("Height")
-        return Math.round(
-            Math.min(
-                (0.9 * window.innerWidth) / ratio,
-                0.9 * window.innerHeight
-            )
-        )
-    },
     trial_duration: 5000,
     choices: ["s"],
     save_trial_parameters: { trial_duration: true },
@@ -256,15 +251,23 @@ var fiction_showimage1 = {
 
 fiction_scales1 = [
     {
-        type: "rating",
+        type: "slider",
         name: "Attractiveness",
         title: "How attractive is this face to you?",
         isRequired: true,
-        rateMin: 0,
-        rateMax: 6,
-        minRateDescription: "Very unattractive",
-        maxRateDescription: "Very attractive",
-        displayMode: "buttons",
+        min: -100,
+        max: 100,
+        step: 1,
+        customLabels: [
+            {
+                value: -100,
+                text: "Very unattractive",
+            },
+            {
+                value: 100,
+                text: "Very attractive",
+            },
+        ],
         // defaultValue: 0,
     },
     {
@@ -347,7 +350,7 @@ var fiction_ratings1_check = {
         ],
     },
     data: {
-        screen: "fiction_ratings1_a",
+        screen: "fiction_ratings1",
     },
 }
 
@@ -376,7 +379,7 @@ var t_fiction_ratings1_nocheck = {
 }
 
 var fiction_phase1 = {
-    timeline_variables: stimuli, // <---------------------------- TODO: remove the extra slicing added for testing
+    timeline_variables: stimuli.slice(0, 3), // <---------------------------- TODO: remove the extra slicing added for testing
     timeline: [
         fiction_fixation1a,
         fiction_cue,
@@ -406,26 +409,6 @@ var fiction_showimage2 = {
     type: jsPsychImageKeyboardResponse,
     stimulus: function () {
         return "stimuli/" + jsPsych.evaluateTimelineVariable("Item")
-    },
-    stimulus_width: function () {
-        let ratio =
-            jsPsych.evaluateTimelineVariable("Width") /
-            jsPsych.evaluateTimelineVariable("Height")
-        return Math.round(
-            Math.min(0.9 * window.innerHeight * ratio, 0.9 * window.innerWidth)
-        )
-    },
-
-    stimulus_height: function () {
-        let ratio =
-            jsPsych.evaluateTimelineVariable("Width") /
-            jsPsych.evaluateTimelineVariable("Height")
-        return Math.round(
-            Math.min(
-                (0.9 * window.innerWidth) / ratio,
-                0.9 * window.innerHeight
-            )
-        )
     },
     trial_duration: 1500,
     choices: ["s"],
@@ -499,4 +482,76 @@ var fiction_ratings2 = {
 var fiction_phase2 = {
     timeline_variables: shuffleArray(stimuli), //.slice(0, 2), // <------------------------------------------------------------------------ TODO: remove this
     timeline: [fiction_fixation2, fiction_showimage2, fiction_ratings2],
+}
+
+// Feedback ====================================================================
+
+var fiction_feedback1 = {
+    type: jsPsychSurvey,
+    survey_json: {
+        title: "Thank you!",
+        description:
+            "Before we start the second phase, we wanted to know your thoughts.",
+        showQuestionNumbers: false,
+        elements: [
+            {
+                type: "checkbox",
+                name: "Feedback_1",
+                title: "Face Attractiveness",
+                description: "Please select all that apply",
+                choices: [
+                    "Some faces were really attractive",
+                    "No face was particularly attractive",
+                    "AI-generated images were more attractive than the photos",
+                    "AI-generated images were less attractive than the photos",
+                ],
+                showOtherItem: true,
+                showSelectAllItem: false,
+                showNoneItem: false,
+            },
+            {
+                type: "checkbox",
+                name: "Feedback_2",
+                title: "AI-Generation Algorithm",
+                description: "Please select all that apply",
+                choices: [
+                    "The difference between the photos and the AI-generated images was obvious",
+                    "The difference between the photos and the AI-generated images was subtle",
+                    "I didn't see any difference between photos and AI-generated images",
+                    "I felt like the labels ('Photograph' and 'AI-Generated') were not always correct",
+                    "I felt like the labels were reversed (e.g., 'Photograph' for AI-generated images and vice versa)",
+                    "I feel like all the images were photos",
+                    "I feel like all the images were AI-generated",
+                ],
+                showOtherItem: true,
+                showSelectAllItem: false,
+                showNoneItem: false,
+            },
+            {
+                visibleIf:
+                    "{Feedback_2} anyof ['I feel like all the images were photos']",
+                title: "How certain are you that all images were photos?",
+                name: "Feedback_2_ConfidenceReal",
+                type: "rating",
+                rateMin: 0,
+                rateMax: 5,
+                minRateDescription: "Not at all",
+                maxRateDescription: "Completely certain",
+            },
+            {
+                visibleIf:
+                    "{Feedback_2} anyof ['I feel like all the images were AI-generated']",
+                title: "How certain are you that all images were AI-generated?",
+                name: "Feedback_2_ConfidenceFake",
+                type: "rating",
+                rateMin: 0,
+                rateMax: 5,
+                minRateDescription: "Not at all",
+                maxRateDescription: "Completely certain",
+            },
+        ],
+    },
+    data: {
+        screen: "fiction_feedback1",
+    },
 }

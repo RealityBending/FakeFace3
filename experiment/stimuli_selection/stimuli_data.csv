@@ -1,4 +1,4 @@
-"rater_sex","rater_sexpref","Stimulus","Mean","SD","N","face_sex","rank_low","rank_high","dist_med","rank_med","Item"
+"rater_sex","rater_sexpref","Stimulus","Mean","SD","N","Category","rank_low","rank_high","dist_med","rank_med","Item"
 "female","men","X038",1.60492700729927,0.893371528945895,1096,"female",1,49,1.75,48,"038_03.jpg"
 "female","men","X120",2.10127737226277,1.11271530641551,1096,"female",2,48,1.2536496350365,46,"120_03.jpg"
 "female","men","X102",2.10310218978102,1.08343671549766,1096,"female",3,47,1.25182481751825,45,"102_03.jpg"
