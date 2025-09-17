@@ -1,12 +1,12 @@
 // FaceFake3 questionnaires
-var questionnaires_instructions = {
-    type: jsPsychHtmlButtonResponse,
-    stimulus:
-        "<h1>Questionnaires</h1>" +
-        "<p>Great! We will continue with a series of questionnaires about your personality.<br>Again, it is important that you answer truthfully. Please read the statements carefully and answer according to what describe you the best.</p>",
-    choices: ["Continue"],
-    data: { screen: "part_instructions" },
-}
+// var questionnaires_instructions = {
+//     type: jsPsychHtmlButtonResponse,
+//     stimulus:
+//         "<h1>Questionnaires</h1>" +
+//         "<p>Great! We will continue with a series of questionnaires about your personality.<br>Again, it is important that you answer truthfully. Please read the statements carefully and answer according to what describe you the best.</p>",
+//     choices: ["Continue"],
+//     data: { screen: "part_instructions" },
+// }
 
 // Generation code ==========================================================================================================
 // Convenience function to shuffle an object (used internally)
