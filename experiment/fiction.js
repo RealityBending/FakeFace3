@@ -109,3 +109,41 @@ const fiction_instructions1 = {
         ],
     },
 }
+
+const fiction_instructions2 = {
+    type: jsPsychSurvey,
+    data: { screen: "fiction_instructions2" },
+    on_finish: function () {
+        fiction_trialnumber = 1 // Reset trial counter
+    },
+    survey_json: {
+        showQuestionNumbers: false,
+        completeText: "Start",
+        pages: [
+            {
+                elements: [
+                    {
+                        type: "html",
+                        name: "Instructions",
+                        html: `
+<h1>Final task</h1>
+<div style="display: flex; gap: 20px; align-items: flex-start;">
+</div>
+<div style="flex: 2; text-align: left;">
+        <p>Thank you for staying with us so far!</p>
+        <p>There is <b>something important</b> we need to reveal... In the previous phase, some faces were <b style='color: #E91E63'>intentionally mislabelled</b> (we told you it was AI-generated when it was actually a real photograph, or vice versa)...</p>
+        <p>In this final phase, we want you to tell us <b>what <i>you</i> think is the correct category</b> of each image. We will briefly present all the faces once more, followed by two questions:</p>
+        <ul>
+            <li><b style="color: ${color_cues["Fiction"]}">AI-generated</b>' or '<b style="color: ${color_cues["Reality"]}">Photograph</b>' Do you think the face corresponds to an AI-generated image or a real photograph?Indicate your degree of <b>confidence</b> and certainty by selecting larger numbers.</p></li>
+        </ul>
+        <p>Sometimes, it is hard to tell, but don't overthink it and <b>go with your gut feeling</b>. At the end, we will tell you if you were correct or wrong!</p>
+        <p>Press start once you are ready.</p>
+    </div>
+</div>
+`,
+                    },
+                ],
+            },
+        ],
+    },
+}
