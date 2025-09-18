@@ -138,14 +138,16 @@ const demand_characteristics = {
             preamble_text = `<div style="text-align: center;">
                     <p><b>Before you start!</b></p>
                     </div>
-                    <p><b>Previous research</b> has found that people rate <b>AI-generated faces</b> as <b style="color: #ff2916ff">more attractive</b> than <b>real faces</b> (Johnson & Lee, 2021; Martínez et al., 2022).</p>
+                    <p>In a survey of 1,442 respondents, Johnson and Lee (2021) found that people <b>rated AI-generated faces as more attractive than real faces</b>. 
+                    This effect was later replicated in an experiment by Martínez and colleagues (2022), who reported a 34% reduction in attractiveness ratings when comparing AI-generated faces to real ones.<p>
                     </div>`
         } else if (condition == "AI-less attractive") {
             preamble_text = `<div style="text-align: center;">
                     <p><b>Before you start!</b></p>
                     </div>
                     <div style="text-align: left;">
-                    <p><b>Previous research</b> has found that people rate <b>AI-generated faces</b> as <b style="color: #ff2916ff">less attractive</b> than <b>real faces</b> (Johnson & Lee, 2021; Martínez et al., 2022).</p>
+                    <p>In a survey of 1,442 respondents, Johnson and Lee (2021) found that people <b>rated AI-generated faces as less attractive than real faces</b>. 
+                    This effect was later replicated in an experiment by Martínez and colleagues (2022), who reported a 34% increase in attractiveness ratings when comparing AI-generated faces to real ones.<p>
                     </div>`
         }
         return {
