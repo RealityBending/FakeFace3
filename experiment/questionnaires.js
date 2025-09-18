@@ -193,11 +193,11 @@ function make_mist(items) {
             customLabels: [
                 {
                     value: -1,
-                    text: "Fake",
+                    text: "False",
                 },
                 {
                     value: 1,
-                    text: "Real",
+                    text: "True",
                 },
             ],
             // defaultValue: 0,
@@ -252,7 +252,7 @@ function make_BRS(items) {
         {
             type: "html",
             name: "BRS_instructions",
-            html: "TWe are interested in how people experience the profound. Below are a series of statements taken from relevant websites. Please read each statement and take a moment to think about what it might mean. Then please rate how “profound” you think it is. Profound means “of deep meaning; of great and broadly inclusive significance.",
+            html: "We are interested in how people experience the profound. Below are a series of statements taken from relevant websites. Please read each statement and take a moment to think about what it might mean. Then please rate how “profound” you think it is. Profound means “of deep meaning; of great and broadly inclusive significance.",
         },
     ]
 

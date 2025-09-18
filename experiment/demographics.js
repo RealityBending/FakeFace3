@@ -51,7 +51,7 @@ const consent_form = {
             "Thank you for taking part in this study conducted by the Discovery Statistics team (see contact information below) as part of the Discovering Statistics module. </p>" +
             // Description
             "<p align='left'><b>Why have I been invited and what will I do?</b><br>" +
-            "The goal is to study how <b>new technology</b> impacts <b>human appreciation</b>. In this study, you will be shown facial images and asked to complete a few questionnaires and perform some tasks." +
+            "The goal is to study how <b>new technology</b> impacts <b>human perception</b>. In this study, you will be shown facial images and asked to complete a few questionnaires and perform some tasks." +
             " The whole experiment will take you <b style='color:#FF5722;'>~xx min</b> to complete. Please make sure that you are <b>attentive</b>.</p>" +
             // Results and personal information
             "<p align='left'><b>What will happen to the results and my personal information?</b><br>" +

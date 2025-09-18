@@ -83,15 +83,15 @@ const fiction_instructions1 = {
   <div style="text-align: left;">
    <p>This study stems out of an exciting new partnership between researchers from the <b>University of Sussex</b> and a young <b>AI startup</b> based in Brighton, UK, that specializes in making AI technology more ethical.</p>
    <p>Our goal is to better understand how various people react to different faces. 
-   For this, we will be using a new <b>image-generation algorithm</b> (based on a modified <i>Generative Adversarial Network</i>) trained on large dataset of images from the <b style="color: #e70ae7ff">Face Research Lab London Database</b> (DeBruine & Jones, 2024).</p>
-   <p>The algorithm was prompted to generate faces based on the characteristics of the faces in the database which were in turn taken from real individuals living in London.</p>
-   
-   <div style='text-align: center;'><img src='media/gan.gif' height='200'></img></div>
+   For this, we will be using a new <b>image-generation algorithm</b> (based on a modified <i>Generative Adversarial Network</i>) trained on large dataset of images from the <b style="color: #e70ae7ff">Face Research Lab London Database</b> (DeBruine & Jones, 2024).
+   The algorithm was prompted to generate faces based on the characteristics of the faces in the database which were in turn taken from real individuals living in London. 
+   <p>The illustration below demonstrates how a <i>GAN</i> algorithm generates face images. 
+   If you are interested, more technical details will be provided at the end of the experiment.</p>
 
-   <p>In the next part, you will be presented with <b>faces generated</b> by our <b>algorithm</b> mixed with <b>real faces</b> from the <b>database</b> (preceded by the word '<b style="color: ${color_cues["Fiction"]}">AI-generated</b>' or '<b style="color: ${color_cues["Reality"]}">Photograph</b>').</p>
-   </div>
-    </div>
-  </div>
+    <p>In the next part, you will be presented with <b>faces generated</b> by our <b>algorithm</b> mixed with <b>real faces</b> from the <b>database</b> (preceded by the word '<b style="color: ${color_cues["Fiction"]}">AI-generated</b>' or '<b style="color: ${color_cues["Reality"]}">Photograph</b>').</p>
+
+   
+   <div style='text-align: center;'><img src='media/gan.gif' height='300'></img></div>
 `,
                     },
                 ],
@@ -139,7 +139,7 @@ const demand_characteristics = {
                     <p><b>Before you start!</b></p>
                     </div>
                     <p>In a survey of 1,442 respondents, Johnson and Lee (2021) found that people <b>rated AI-generated faces as more attractive than real faces</b>. 
-                    This effect was later replicated in an experiment by Martínez and colleagues (2022), who reported a 34% reduction in attractiveness ratings when comparing AI-generated faces to real ones.<p>
+                    This effect was later replicated in an experiment by Martínez and colleagues (2022), who reported a 34% increase in attractiveness ratings when comparing AI-generated faces to real ones.<p>
                     </div>`
         } else if (condition == "AI-less attractive") {
             preamble_text = `<div style="text-align: center;">
@@ -147,7 +147,7 @@ const demand_characteristics = {
                     </div>
                     <div style="text-align: left;">
                     <p>In a survey of 1,442 respondents, Johnson and Lee (2021) found that people <b>rated AI-generated faces as less attractive than real faces</b>. 
-                    This effect was later replicated in an experiment by Martínez and colleagues (2022), who reported a 34% increase in attractiveness ratings when comparing AI-generated faces to real ones.<p>
+                    This effect was later replicated in an experiment by Martínez and colleagues (2022), who reported a 34% reduction in attractiveness ratings when comparing AI-generated faces to real ones.<p>
                     </div>`
         }
         return {
@@ -194,15 +194,16 @@ const fiction_instructions2 = {
                         type: "html",
                         name: "Instructions",
                         html: `
-<h1>Final task</h1>
+<h1>Instructions</h1>
 <div style="display: flex; gap: 20px; align-items: flex-start;">
+    <div style="flex: 1; min-width: 100px;"> <img src="media/illustration_realitytask.jpg" alt="Is it AI or real?" style="max-width: 100%; height: auto; display: block;">
 </div>
 <div style="flex: 2; text-align: left;">
-        <p>Thank you for staying with us so far!</p>
+        <p><b>Thank you for staying with us so far!</b></p>
         <p>There is <b>something important</b> we need to reveal... In the previous phase, some faces were <b style='color: #E91E63'>intentionally mislabelled</b> (we told you it was AI-generated when it was actually a real photograph, or vice versa)...</p>
-        <p>In this final phase, we want you to tell us <b>what <i>you</i> think is the correct category</b> of each image. We will briefly present all the faces once more, followed by two questions:</p>
+        <p>In this final phase, we want you to tell us <b>what <i>you</i> think is the correct category</b> of each image. We will briefly present all the faces once more, followed by one question:</p>
         <ul>
-            <li><b style="color: ${color_cues["Fiction"]}">AI-generated</b>' or '<b style="color: ${color_cues["Reality"]}">Photograph</b>' Do you think the face corresponds to an AI-generated image or a real photograph?Indicate your degree of <b>confidence</b> and certainty by selecting larger numbers.</p></li>
+            <li> Do you think the face corresponds to an <b style="color: ${color_cues["Fiction"]}">AI-generated</b>' image or a real '<b style="color: ${color_cues["Reality"]}">Photograph?</b> Indicate your degree of <b>confidence</b> and certainty by moving the slider closer to the edges.</p></li>
         </ul>
         <p>Sometimes, it is hard to tell, but don't overthink it and <b>go with your gut feeling</b>. At the end, we will tell you if you were correct or wrong!</p>
         <p>Press start once you are ready.</p>
@@ -288,6 +289,8 @@ var fiction_showimage1 = {
     },
     trial_duration: 5000,
     choices: ["s"],
+    stimulus_width: window.innerWidth * 0.5, // 50% of screen width
+    stimulus_height: null,
     save_trial_parameters: { trial_duration: true },
     data: function () {
         return {
@@ -464,6 +467,8 @@ var fiction_showimage2 = {
     stimulus: function () {
         return "stimuli/" + jsPsych.evaluateTimelineVariable("Item")
     },
+    stimulus_width: window.innerWidth * 0.5, // 50% of screen width
+    stimulus_height: null,
     trial_duration: 1500,
     choices: ["s"],
     save_trial_parameters: { trial_duration: true },
@@ -505,7 +510,7 @@ var fiction_ratings2 = {
                         name: "Reality",
                         title: "I think this face is...", // "Indicate your confidence that the image is a human or AI creation"
                         description:
-                            "Indicate your confidence that the image is fake or real",
+                            "Indicate your confidence that the image is AI-generated or real",
                         isRequired: true,
                         // minWidth: "200%",
                         // maxWidth: "200%",
@@ -515,7 +520,7 @@ var fiction_ratings2 = {
                         customLabels: [
                             {
                                 value: -100,
-                                text: " AI-generated",
+                                text: "AI-generated",
                             },
                             {
                                 value: 100,
@@ -534,7 +539,7 @@ var fiction_ratings2 = {
 }
 
 var fiction_phase2 = {
-    timeline_variables: shuffleArray(stimuli), //.slice(0, 2), // <------------------------------------------------------------------------ TODO: remove this
+    timeline_variables: shuffleArray(stimuli).slice(0, 3), // <------------------------------------------------------------------------ TODO: remove this
     timeline: [fiction_fixation2, fiction_showimage2, fiction_ratings2],
 }
 

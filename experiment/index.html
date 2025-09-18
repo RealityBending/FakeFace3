@@ -46,20 +46,9 @@
         var jsPsych = initJsPsych({
             show_progress_bar: true,
             message_progress_bar: "Progress",
-            // on_finish: function () {
-            //     // jsPsych.data.displayData("json") // Display data in browser
-            //     // window.location = "https://realitybending.github.io/" // Redirect to lab website
-            //     if (jsPsych.data.urlVariables()["exp"] == "SONA") {
-            //         window.location = "URM" + jsPsych.data.urlVariables()["sona_id"]
-            //     } else if (jsPsych.data.urlVariables()["exp"] == "prolific") {
-            //         d = jsPsych.data.get().filter({ screen: "demographics_debrief" })["trials"][0]
-            //         if (d["Reward"] == "Automatic") {
-            //             window.location = "https://app.prolific.com/submissions/complete?cc=C1FUNHUW" // Pass
-            //         } else {
-            //             window.location = "https://app.prolific.com/submissions/complete?cc=C1I3M32X" // Fail
-            //         }
-            //     }
-            // },
+            on_finish: function () {
+                jsPsych.data.displayData("csv")
+            },
         })
 
         // Initialize timeline ---------------------------------------------------
@@ -72,14 +61,18 @@
             "Expectations",
         ])[0]
 
+        timeline.push(fullscreen_on) // Enter fullscreen mode
+
+        timeline.push(fiction_phase1)
+
         // Consent -----------------------------------------------------------
-        // timeline.push(fullscreen_on) // Enter fullscreen mode
-        // timeline.push(consent_form)
+        timeline.push(fullscreen_on) // Enter fullscreen mode
         timeline.push(fiction_preloadstims)
+        timeline.push(consent_form)
 
         // Demographics -------------------------------------------------------
         timeline.push(demographics_browser_info)
-        // timeline.push(demographics_questions)
+        timeline.push(demographics_questions)
 
         // Questionnaires -------------------------------------------------------
         questionnaires = [
@@ -88,9 +81,10 @@
             questionnaire_BRS,
         ]
         questionnaires = jsPsych.randomization.shuffle(questionnaires) // Shuffle order of questionnaires
-        // timeline.push(questionnaires[0]) // First questionnaire
-        // Fiction stage 1
-        // timeline.push(fiction_instructions1)
+        timeline.push(questionnaires[0]) // First questionnaire
+
+        // Fiction stage 1 ------------------------------------------------------
+        timeline.push(fiction_instructions1)
         if (condition !== "Control") {
             timeline.push(demand_characteristics)
         }
@@ -99,17 +93,17 @@
 
         timeline.push(questionnaires[1]) // Second questionnaire
 
-        //Fiction stage 2
+        //Fiction stage 2 -------------------------------------------------------
         timeline.push(fiction_instructions2)
         timeline.push(fiction_phase2)
 
         timeline.push(questionnaires[2]) // Third questionnaire
 
-        // End of experiment -------------------------------------------------
+        // End of experiment ----------------------------------------------------
         timeline.push(experiment_feedback)
         timeline.push(demographics_debriefing)
 
-        // Save data via DataPipe ====================================================
+        // Save data via DataPipe ================================================
         // timeline.push({
         //     type: jsPsychPipe,
         //     action: "save",
