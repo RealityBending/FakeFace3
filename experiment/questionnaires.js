@@ -176,7 +176,7 @@ function make_mist(items) {
         {
             type: "html",
             name: "MIST_instructions",
-            html: "The following news headlines are a combination of real, published headlines and fake headlines designed to look like real ones. Please read the following news headlines and rate them on a scale from 'Fake' to 'Real' with the middle meaning unsure and closer to each end of the scale indicating greater confidence in your answer.",
+            html: "The following news headlines are a combination of real, published headlines and fake headlines designed to look like real ones. <p>Please read the following news headlines and rate them on a scale from 'Fake' to 'Real' with the middle meaning unsure and closer to each end of the scale indicating greater confidence in your answer.",
         },
     ]
 

@@ -176,6 +176,9 @@ const demand_characteristics = {
             ],
         }
     },
+    on_finish: function (data) {
+        data.condition = condition
+    },
 }
 
 const fiction_instructions2 = {
@@ -436,7 +439,7 @@ var t_fiction_ratings1_nocheck = {
 }
 
 var fiction_phase1 = {
-    timeline_variables: stimuli.slice(0, 3), // <---------------------------- TODO: remove the extra slicing added for testing
+    timeline_variables: stimuli.slice(0, 1), // <---------------------------- TODO: remove the extra slicing added for testing
     timeline: [
         fiction_fixation1a,
         fiction_cue,
@@ -539,7 +542,7 @@ var fiction_ratings2 = {
 }
 
 var fiction_phase2 = {
-    timeline_variables: shuffleArray(stimuli).slice(0, 3), // <------------------------------------------------------------------------ TODO: remove this
+    timeline_variables: shuffleArray(stimuli).slice(0, 1), // <------------------------------------------------------------------------ TODO: remove this
     timeline: [fiction_fixation2, fiction_showimage2, fiction_ratings2],
 }
 

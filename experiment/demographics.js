@@ -86,6 +86,9 @@ const consent_form = {
             ],
         }
     },
+    on_finish: function (data) {
+        data.condition = condition // saves condition only for this consent trial
+    },
 }
 
 // Demographic info ========================================================================
