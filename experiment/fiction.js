@@ -124,6 +124,58 @@ const fiction_instructions1 = {
     },
 }
 
+const demand_characteristics = {
+    type: jsPsychSurvey,
+    data: { screen: "demand_characteristics" },
+    survey_json: function () {
+        let preamble_text = ""
+
+        if (condition == "Expectations") {
+            preamble_text = `<div style="text-align: center;">
+                    <p><b>Before you start!</b><p>
+                    </div>`
+        } else if (condition == "AI-more attractive") {
+            preamble_text = `<div style="text-align: center;">
+                    <p><b>Before you start!</b></p>
+                    </div>
+                    <p><b>Previous research</b> has found that people rate <b>AI-generated faces</b> as <b style="color: #ff2916ff">more attractive</b> than <b>real faces</b> (Johnson & Lee, 2021; Martínez et al., 2022).</p>
+                    </div>`
+        } else if (condition == "AI-less attractive") {
+            preamble_text = `<div style="text-align: center;">
+                    <p><b>Before you start!</b></p>
+                    </div>
+                    <div style="text-align: left;">
+                    <p><b>Previous research</b> has found that people rate <b>AI-generated faces</b> as <b style="color: #ff2916ff">less attractive</b> than <b>real faces</b> (Johnson & Lee, 2021; Martínez et al., 2022).</p>
+                    </div>`
+        }
+        return {
+            showQuestionNumbers: false,
+            completeText: "Continue",
+            pages: [
+                {
+                    elements: [
+                        {
+                            type: "html",
+                            html: preamble_text,
+                        },
+                        {
+                            title: "Do you think you will find AI-generated faces more, less, or similarly attractive compared to real faces?",
+                            name: "expectations",
+                            type: "radiogroup",
+                            choices: [
+                                "More attractive",
+                                "Less attractive",
+                                "Similarly attractive",
+                            ],
+                            isRequired: true,
+                        },
+                    ],
+                },
+            ],
+        }
+    },
+}
+
 const fiction_instructions2 = {
     type: jsPsychSurvey,
     data: { screen: "fiction_instructions2" },

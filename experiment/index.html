@@ -69,17 +69,17 @@
             "Control",
             "AI-more attractive",
             "AI-less attractive",
-            "prompting",
-        ])
+            "Expectations",
+        ])[0]
 
         // Consent -----------------------------------------------------------
-        timeline.push(fullscreen_on) // Enter fullscreen mode
-        timeline.push(consent_form)
+        // timeline.push(fullscreen_on) // Enter fullscreen mode
+        // timeline.push(consent_form)
         timeline.push(fiction_preloadstims)
 
         // Demographics -------------------------------------------------------
         timeline.push(demographics_browser_info)
-        timeline.push(demographics_questions)
+        // timeline.push(demographics_questions)
 
         // Questionnaires -------------------------------------------------------
         questionnaires = [
@@ -88,9 +88,12 @@
             questionnaire_BRS,
         ]
         questionnaires = jsPsych.randomization.shuffle(questionnaires) // Shuffle order of questionnaires
-        timeline.push(questionnaires[0]) // First questionnaire
+        // timeline.push(questionnaires[0]) // First questionnaire
         // Fiction stage 1
-        timeline.push(fiction_instructions1)
+        // timeline.push(fiction_instructions1)
+        if (condition !== "Control") {
+            timeline.push(demand_characteristics)
+        }
         timeline.push(fiction_phase1)
         timeline.push(fiction_feedback1)
 
