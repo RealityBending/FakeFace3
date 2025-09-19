@@ -1,6 +1,5 @@
 // Full screen
-var fullscreen_text =
-    "<p>The experiment will switch to full screen mode when you press the button below</p>"
+var fullscreen_text = "<p>The experiment will switch to full screen mode when you press the button below</p>"
 var fullscreen_button = "Continue"
 
 var fullscreen_on = {
@@ -105,17 +104,6 @@ const demographics_questions = {
             {
                 elements: [
                     {
-                        title: "How would you describe your gender",
-                        name: "Gender",
-                        type: "radiogroup",
-                        choices: ["Male", "Female", "Prefer not to say"],
-                        showOtherItem: true,
-                        otherText: "In another way",
-                        otherPlaceholder: "Please specify",
-                        isRequired: true,
-                        colCount: 0,
-                    },
-                    {
                         type: "text",
                         title: "Please enter your age (in years)",
                         name: "Age",
@@ -126,9 +114,20 @@ const demographics_questions = {
                         placeholder: "e.g., 21",
                     },
                     {
+                        title: "How would you describe your gender",
+                        name: "Gender",
+                        type: "radiogroup",
+                        choices: ["Male", "Female", "Prefer not to say"],
+                        showOtherItem: true,
+                        otherText: "In another way",
+                        otherPlaceholder: "Please specify",
+                        isRequired: true,
+                        colCount: 0,
+                    },
+
+                    {
                         title: "What sexual orientation do you identify with?",
-                        description:
-                            "These questions are important to understand the results in the latter part of the experiment.",
+                        description: "These questions are important to understand the results in the latter part of the experiment.",
                         name: "SexualOrientation",
                         type: "radiogroup",
                         choices: ["Heterosexual", "Homosexual", "Bisexual"],
@@ -140,6 +139,7 @@ const demographics_questions = {
                     },
                     {
                         title: "How would you describe your ethnicity?",
+                        description: "These questions are helpful to better characterize our sample and prevent overgeneralization.",
                         name: "Ethnicity",
                         type: "radiogroup",
                         choices: [
@@ -174,8 +174,7 @@ const experiment_feedback = {
     type: jsPsychSurvey,
     survey_json: {
         title: "Feedback",
-        description:
-            "It is the end of the experiment! Don't hesitate to leave us a feedback.",
+        description: "It is the end of the experiment! Don't hesitate to leave us a feedback.",
         completeText: "Next",
         showQuestionNumbers: false,
         pages: [
@@ -256,9 +255,7 @@ We apologize for the necessary deception used in the instructions (as there were
 const demographics_endscreen = {
     type: jsPsychSurvey,
     survey_json: function () {
-        text =
-            "<h2 style='color:green;'>Data saved successfully!</h2>" +
-            "<p>Thank you for participating, it means a lot to us.</p>"
+        text = "<h2 style='color:green;'>Data saved successfully!</h2>" + "<p>Thank you for participating, it means a lot to us.</p>"
 
         // Return survey
         return {

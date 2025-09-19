@@ -40,14 +40,14 @@ dat <- df |>
   ) |>
   full_join(info, by = "Stimulus")
 
-# Function to select lowest/highest/median faces for a group
+# Function to select lowest/highest/mean faces for a group
 select_group <- function(df, rater, face) {
   pool <- df |>
     filter(rater_sex == rater, face_sex == face) |>
     mutate(
       rank_low  = rank(Mean, ties.method = "first"),
       rank_high = rank(-Mean, ties.method = "first"),
-      dist_med  = abs(Mean - median(Mean, na.rm = TRUE)),
+      dist_med  = abs(Mean - mean(Mean, na.rm = TRUE)),
       rank_med  = rank(dist_med, ties.method = "first")
     )
 
@@ -116,6 +116,59 @@ unlink("../stimuli/*")
 #
 # Copy each file
 for (id in selection$Item) {
-  file.copy(paste0(paste0(path_london, "/neutral_front/"), id), "../stimuli/")
+  file.copy(paste0(paste0(path_london, "neutral_front/"), id), "../stimuli/")
 }
 
+#===============================================================================
+# Create instruction image
+
+
+library(magick)
+
+# get two female faces NOT in the final selection
+excluded_female <- dat |>
+  filter(face_sex == "female", !Stimulus %in% selection$Stimulus) |>
+  slice_head(n = 3) |>
+  slice_tail(n = 2)  # just take the first two
+
+files <- paste0(path_london, "neutral_front/",
+                str_remove(excluded_female$Stimulus, "^X"), "_03.jpg")
+
+# read them
+img1 <- image_read(files[1])
+img2 <- image_read(files[2])
+
+# add watermarks
+img1 <- image_annotate(
+  img1,
+  text   = "London Lab Database (Debruine, 2024)",
+  size   = 70,
+  color  = "white",
+  boxcolor = "black",   # background for readability
+  gravity = "southeast"     # place at bottom
+)
+
+img2 <- image_annotate(
+  img2,
+  text   = "Style-transferred output (E-EGAN V0.54)",
+  size   = 70,
+  color  = "white",
+  boxcolor = "black",
+  gravity = "southeast"
+)
+
+# create an arrow image
+arrow <- image_blank(width = 200, height = max(image_info(img1)$height,
+                                               image_info(img2)$height),
+                     color = "white") |>
+  image_annotate("→", size = 100, color = "black", gravity = "center")
+
+# combine side by side
+final_img <- image_append(c(img1, arrow, img2), stack = FALSE) |>
+  image_resize("800")
+
+# preview
+print(final_img)
+
+# save to file
+image_write(final_img, "../media/example.png")
