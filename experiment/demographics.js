@@ -1,22 +1,3 @@
-// Full screen
-var fullscreen_text = "<p>The experiment will switch to full screen mode when you press the button below</p>"
-var fullscreen_button = "Continue"
-
-var fullscreen_on = {
-    type: jsPsychFullscreen,
-    message: fullscreen_text,
-    button_label: fullscreen_button,
-    fullscreen_mode: true,
-    delay_after: 0,
-}
-
-var fullscreen_off = {
-    type: jsPsychFullscreen,
-    message: fullscreen_text,
-    button_label: fullscreen_button,
-    fullscreen_mode: false,
-}
-
 // Retrieve and save browser info ========================================================
 var demographics_browser_info = {
     type: jsPsychBrowserCheck,
@@ -31,6 +12,14 @@ var demographics_browser_info = {
         // Rename
         data["screen_height"] = dat["height"]
         data["screen_width"] = dat["width"]
+
+        // Add URL variables - ?sona_id=x&exp=1
+        let urlvars = jsPsych.data.urlVariables()
+        data["researcher"] = urlvars["exp"]
+        data["sona_id"] = urlvars["sona_id"]
+        data["prolific_id"] = urlvars["PROLIFIC_PID"] // Prolific
+        data["study_id"] = urlvars["STUDY_ID"] // Prolific
+        data["session_id"] = urlvars["SESSION_ID"] // Prolific
     },
 }
 
@@ -51,7 +40,7 @@ const consent_form = {
             // Description
             "<p align='left'><b>Why have I been invited and what will I do?</b><br>" +
             "The goal is to study how <b>new technology</b> impacts <b>human perception</b>. In this study, you will be shown facial images and asked to complete a few questionnaires and perform some tasks." +
-            " The whole experiment will take you <b style='color:#FF5722;'>~xx min</b> to complete. Please make sure that you are <b>attentive</b>.</p>" +
+            " The whole experiment will take you <b style='color:#FF5722;'>~20 min</b> to complete. Please make sure that you are <b>attentive</b>.</p>" +
             // Results and personal information
             "<p align='left'><b>What will happen to the results and my personal information?</b><br>" +
             "The results of this research may be written into a scientific publication. Your anonymity will be ensured in the way described in the consent information below. <b>Please read this information carefully</b> and then, if you wish to take part, please acknowledge that you have fully understood this sheet, and that you consent to take part in the study as it is described here.</p>" +

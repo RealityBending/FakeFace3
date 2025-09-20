@@ -50,7 +50,7 @@
         const condition = jsPsych.randomization.shuffle(["Control", "More attractive", "Less attractive", "Self Expectations"])[0]
 
         // Consent -----------------------------------------------------------
-        timeline.push(fullscreen_on) // Enter fullscreen mode
+        timeline.push({ type: jsPsychFullscreen, fullscreen_mode: true })
         timeline.push(fiction_preloadstims)
         timeline.push(consent_form)
 
@@ -93,7 +93,7 @@
         })
 
         // Exit fullscreen mode
-        timeline.push(fullscreen_off)
+        timeline.push({ type: jsPsychFullscreen, fullscreen_mode: false })
         timeline.push(demographics_endscreen)
 
         // Run the timeline -------------------------------------------------------
