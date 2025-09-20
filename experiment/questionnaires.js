@@ -118,7 +118,7 @@ const questionnaire_bait = {
         return {
             title: "Artificial Intelligence",
             showQuestionNumbers: false,
-            goNextPageAutomatic: true,
+            goNextPageAutomatic: false,
             pages: make_bait(bait_items),
         }
     },
@@ -151,7 +151,7 @@ function make_mist(items) {
         {
             type: "html",
             name: "MIST_instructions",
-            html: "<p style='max-width: 800px'>The following news headlines are a combination of <b>real</b>, published headlines and <b>fake</b> headlines designed to look like real ones. Please read the following news headlines and rate them on a scale from 'Fake' to 'Real' with the middle meaning unsure and closer to each end of the scale indicating greater confidence in your answer.</p>",
+            html: "<p style='max-width: 800px'>The following news headlines are a combination of <b>real</b>, published headlines and <b>fake</b> headlines designed to look like real ones. Please read the following news headlines and rate them on a scale from 'False' to 'True' with the middle meaning unsure and closer to each end of the scale indicating greater confidence in your answer.</p>",
         },
     ]
 
@@ -192,7 +192,7 @@ const questionnaire_MIST = {
         return {
             title: "Real News or Fake News?",
             showQuestionNumbers: false,
-            goNextPageAutomatic: true,
+            goNextPageAutomatic: false,
             pages: make_mist(mist_items),
         }
     },
@@ -268,7 +268,7 @@ const questionnaire_BRS = {
         return {
             title: "Profound Experiences",
             showQuestionNumbers: false,
-            goNextPageAutomatic: true,
+            goNextPageAutomatic: false,
             pages: make_BRS(BRS_items),
         }
     },

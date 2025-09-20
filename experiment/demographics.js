@@ -36,7 +36,7 @@ const consent_form = {
         text +=
             // Overview
             "<p align='left'><b>Invitation to Take Part</b><br>" +
-            "Thank you for taking part in this study conducted by the Discovery Statistics team (see contact information below) as part of the Discovering Statistics module. </p>" +
+            "Thank you for taking part in this study conducted by the Discovering Statistics team (see contact information below) as part of the module. </p>" +
             // Description
             "<p align='left'><b>Why have I been invited and what will I do?</b><br>" +
             "The goal is to study how <b>new technology</b> impacts <b>human perception</b>. In this study, you will be shown facial images and asked to complete a few questionnaires and perform some tasks." +

@@ -83,12 +83,12 @@ const fiction_instructions1 = {
     <img src="media/Psychology.png" alt="School of Psychology logo" style="height: 10vh; width: auto;" />
 </div>
 <h3>Real and AI Faces</h3>
-<p>The task you are about to do stems out of an exciting collaboration between <b>School of Psychology</b> and the <b>School of Informatics</b> aimed at better understanding the ethical implications of AI technology.</p>
+<p>The task you are about to do stems out of an exciting collaboration between the <b>School of Psychology</b> and the <b>School of Informatics</b> aimed at better understanding the ethical implications of AI technology.</p>
 <p>Our goal is to better understand how various people react and judge various faces.</p>
 <div style="display: flex; gap: 24px; align-items: flex-start;">
     <div style="flex: 1 1 60%; text-align: left;">
         <p>For this, we created bespoke face images using an adapted version of a <i>Generative Adversarial Network</i> (GAN) algorithm.</p>
-        <p>This face-generation algorithm used photographs from the <b style="color: #1A237E">Face Research Lab London Database</b> set of images (DeBruine & Jones, 2024), to ensure that the generated faces were as <b>realistic and homogeneous</b> (grey background, white T-shirt, consistent lightning and exposure, etc.) as possible.</p>
+        <p>This face-generation algorithm used photographs of real faces from the <b style="color: #1A237E">Face Research Lab London Database</b> set of images (DeBruine & Jones, 2024), to ensure that the generated faces were as <b>realistic and homogeneous</b> (grey background, white T-shirt, consistent lightning and exposure, etc.) as possible.</p>
         <p>(Note: if you are interested, more technical details will be provided at the end of the experiment with a link to the algorithm documentation.)</p>
 
         <div style="text-align: center; margin-top: 12px;">
@@ -134,7 +134,7 @@ const fiction_instructions1 = {
                 <b>We would like you to imagine that you are meeting this person for the first time in real life.</b></p>   
                 After each image, you will be asked to rate these faces on the following:</p>
                 <ul>
-                    <li><b style="color: #FF5722"> Attractiveness</b>: To what extent do <b>you personally</b> find the person <b>attractive</b> (how drawn are you to this person, to what extend would you be in principle interested in getting to know them better).</li>
+                    <li><b style="color: #FF5722"> Attractiveness</b>: To what extent do <b>you personally</b> find the person <b>attractive</b> (how drawn are you to this person, to what extent would you be in principle interested in getting to know them better).</li>
                     <li><b style="color: #9C27B0"> Beauty</b>: To what extent do you think the face is "objectively" <b>beautiful</b> (the degree to which the face is appealing based on aesthetic criteria).</li>
                     <!-- <li><b style="color: #3F51B5"> Trustworthiness</b>: To what extent do you find this person <b>trustworthy</b> (reliable, honest, responsible, etc.).</li> -->
                      <li><b style="color: #3F51B5"> Symmetry</b>: To what extent was this face <b>symmetrical</b> (the degree to which the left and right sides of the face are identical).</li> 
@@ -234,7 +234,7 @@ const fiction_instructions2 = {
 </div>
 <div style="flex: 2; text-align: left;">
         <p><b>Thank you for staying with us so far!</b></p>
-        <p>There is <b>something important</b> we need to reveal... In the previous phase, the labels (<b style="color: ${color_cues["Fiction"]}">AI-generated</b>' or '<b style="color: ${color_cues["Reality"]}">Photograph</b>) were actually <b>mixed-up</b>! As a result, they were correct for some faces but wrong for others (e.g., the label said "AI" but the face was actually a photo, or vice versa).</p>
+        <p>There is <b>something important</b> we need to reveal... In the previous phase, the labels ('<b style="color: ${color_cues["Fiction"]}">AI-generated</b>' or '<b style="color: ${color_cues["Reality"]}">Photograph</b>') were actually <b>mixed-up</b>! As a result, they were correct for some faces but wrong for others (e.g., the label said "AI" but the face was actually a photo, or vice versa).</p>
         <p>In this final phase, we want you to try to identify <b>the correct category</b> of each image. We will briefly present all the faces once more, followed by one question about whether you think the face image is a real photograph from the original picture database or an AI-generated image</p>
         <p>Sometimes, it is hard to tell, but don't overthink it and <b>go with your gut feeling</b>. At the end, we will tell you if you were correct or wrong!</p>
     </div>
@@ -500,7 +500,7 @@ var t_fiction_ratings1_nocheck = {
 }
 
 var fiction_phase1 = {
-    timeline_variables: stimuli.slice(0, 2), // <---------------------------- TODO: remove the extra slicing added for testing
+    timeline_variables: stimuli, //.slice(0, 2), // <---------------------------- TODO: remove the extra slicing added for testing
     timeline: [
         fiction_fixation1a,
         fiction_cue,
@@ -613,7 +613,7 @@ var fiction_ratings2 = {
 }
 
 var fiction_phase2 = {
-    timeline_variables: shuffleArray(stimuli).slice(0, 2), // <------------------------------------------------------------------------ TODO: remove this
+    timeline_variables: shuffleArray(stimuli), //.slice(0, 2), // <------------------------------------------------------------------------ TODO: remove this
     timeline: [fiction_fixation2, fiction_showimage2, fiction_ratings2],
 }
 
