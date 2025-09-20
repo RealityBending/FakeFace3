@@ -194,15 +194,15 @@ const experiment_feedback = {
                         rateMax: 4,
                         rateType: "stars",
                     },
-                    {
-                        type: "rating",
-                        name: "Feedback_Quality",
-                        title: "To what extent did you do the experiment carefully and thoroughly?",
-                        description: "Please be honest!",
-                        isRequired: false,
-                        rateMin: 0,
-                        rateMax: 4,
-                    },
+                    // {
+                    //     type: "rating",
+                    //     name: "Feedback_Quality",
+                    //     title: "To what extent did you do the experiment carefully and thoroughly?",
+                    //     description: "Please be honest!",
+                    //     isRequired: false,
+                    //     rateMin: 0,
+                    //     rateMax: 4,
+                    // },
                     {
                         type: "comment",
                         name: "Feedback_Text",
@@ -235,9 +235,9 @@ const demographics_debriefing = {
 <img src='https://blogs.brighton.ac.uk/sussexwrites/files/2019/06/University-of-Sussex-logo-transparent.png' width='150px' align='right'/><br><br><br><br><br>
 <h3>Debriefing</h3>
 <p align='left'>
-The purpose of this study was actually to study the effect on perceived attractiveness and trustworthiness of <i>believing</i> that the content is fake (AI-generated or real).
-Our hypothesis is that believing that something is AI-generated would lead to lower attraction and trustworthiness ratings.
-As we are primarily interested in your <i>beliefs</i> about reality, <b>all images were in fact taken from an existing database of real paintings</b> used in psychology research to study aesthetic judgments.
+The purpose of this study was actually to study the effect on perceived attractiveness of <i>believing</i> that the content is fake (AI-generated or real).
+Our hypothesis is that believing that something is AI-generated would lead to lower attraction and beauty ratings.
+As we are primarily interested in your <i>beliefs</i> about reality, <b>all images were in fact taken from an existing database of real photographs</b> used in psychology research to study faces.
 We apologize for the necessary deception used in the instructions (as there were no AI-generated images!), and we hope that you understand its role in ensuring the validity of our experiment.</p>
 <p align='left'><b>Thank you again!</b> Your participation in this study will be kept completely confidential. If you have any questions or concerns about the project, please contact D.Makowski@sussex.ac.uk. and/or R.Baykova@sussex.ac.uk and/or D.evans@sussex.ac.uk. </p>
 <p>To complete your participation in this study, click on 'Continue' and <b style="color: red">wait until your responses have been successfully saved</b> before closing the tab.</p> 

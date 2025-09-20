@@ -50,51 +50,51 @@
         const condition = jsPsych.randomization.shuffle(["Control", "More attractive", "Less attractive", "Self Expectations"])[0]
 
         // Consent -----------------------------------------------------------
-        // timeline.push(fullscreen_on) // Enter fullscreen mode
-        // timeline.push(fiction_preloadstims)
-        // timeline.push(consent_form)
+        timeline.push(fullscreen_on) // Enter fullscreen mode
+        timeline.push(fiction_preloadstims)
+        timeline.push(consent_form)
 
-        // // Demographics -------------------------------------------------------
-        // timeline.push(demographics_browser_info)
-        // timeline.push(demographics_questions)
+        // Demographics -------------------------------------------------------
+        timeline.push(demographics_browser_info)
+        timeline.push(demographics_questions)
 
         // // Questionnaires -------------------------------------------------------
         questionnaires = [questionnaire_bait, questionnaire_MIST, questionnaire_BRS]
-        // // questionnaires = jsPsych.randomization.shuffle(questionnaires) // Shuffle order of questionnaires
-        // timeline.push(questionnaires[0]) // First questionnaire
+        questionnaires = jsPsych.randomization.shuffle(questionnaires) // Shuffle order of questionnaires
+        timeline.push(questionnaires[0]) // First questionnaire
 
         // Fiction stage 1 ------------------------------------------------------
-        // timeline.push(fiction_instructions1)
-        // if (condition !== "Control") {
-        //     timeline.push(demand_characteristics)
-        // }
+        timeline.push(fiction_instructions1)
+        if (condition !== "Control") {
+            timeline.push(fiction_expectations)
+        }
         timeline.push(fiction_phase1)
-        // timeline.push(fiction_feedback1)
+        timeline.push(fiction_feedback1)
 
-        // timeline.push(questionnaires[1]) // Second questionnaire
+        timeline.push(questionnaires[1]) // Second questionnaire
 
-        // //Fiction stage 2 -------------------------------------------------------
-        // timeline.push(fiction_instructions2)
-        // timeline.push(fiction_phase2)
+        //Fiction stage 2 -------------------------------------------------------
+        timeline.push(fiction_instructions2)
+        timeline.push(fiction_phase2)
 
-        // timeline.push(questionnaires[2]) // Third questionnaire
+        timeline.push(questionnaires[2]) // Third questionnaire
 
-        // // End of experiment ----------------------------------------------------
-        // timeline.push(experiment_feedback)
-        // timeline.push(demographics_debriefing)
+        // End of experiment ----------------------------------------------------
+        timeline.push(experiment_feedback)
+        timeline.push(demographics_debriefing)
 
-        // // Save data via DataPipe ================================================
-        // // timeline.push({
-        // //     type: jsPsychPipe,
-        // //     action: "save",
-        // //     experiment_id: "3trOIIJGRBPV", // This is generated in the DataPipe interface
-        // //     filename: `${jsPsych.randomization.randomID(10)}.csv`,
-        // //     data_string: () => jsPsych.data.get().csv(),
-        // // })
+        // Save data via DataPipe ================================================
+        timeline.push({
+            type: jsPsychPipe,
+            action: "save",
+            experiment_id: "3trOIIJGRBPV", // This is generated in the DataPipe interface
+            filename: `${jsPsych.randomization.randomID(10)}.csv`,
+            data_string: () => jsPsych.data.get().csv(),
+        })
 
-        // // Exit fullscreen mode
-        // timeline.push(fullscreen_off)
-        // timeline.push(demographics_endscreen)
+        // Exit fullscreen mode
+        timeline.push(fullscreen_off)
+        timeline.push(demographics_endscreen)
 
         // Run the timeline -------------------------------------------------------
         jsPsych.run(timeline)

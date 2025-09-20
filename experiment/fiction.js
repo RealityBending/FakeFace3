@@ -61,8 +61,8 @@ color_cues = { Reality: color_cues[0], Fiction: color_cues[1] }
 var text_cue = { Reality: "Photograph", Fiction: "AI-generated" }
 stimuli = assignCondition(stimuli_list)
 
-// We make 6 catch trials (always starting from 2 = the first trial)
-catch_trials = [2].concat(generateRandomNumbers(3, stimuli_list.length, 5))
+// We make 9 catch trials (always starting from 2 = the first trial)
+catch_trials = [2].concat(generateRandomNumbers(3, stimuli_list.length, 8))
 
 // Screens =====================================================================
 const fiction_instructions1 = {
@@ -153,47 +153,52 @@ const fiction_instructions1 = {
     },
 }
 
-const demand_characteristics = {
+const fiction_expectations = {
     type: jsPsychSurvey,
-    data: { screen: "demand_characteristics" },
+    data: { screen: "fiction_expectations" },
     survey_json: function () {
-        let preamble_text = ""
+        let suggestion = ""
 
-        if (condition == "Expectations") {
-            preamble_text = `<div style="text-align: center;">
-                    <p><b>Before you start!</b><p>
-                    </div>`
-        } else if (condition == "AI-more attractive") {
-            preamble_text = `<div style="text-align: center;">
-                    <p><b>Before you start!</b></p>
-                    </div>
-                    <p>In a survey of 1,442 respondents, Johnson and Lee (2021) found that people <b>rated AI-generated faces as more attractive than real faces</b>. 
-                    This effect was later replicated in an experiment by Martínez and colleagues (2022), who reported a 34% increase in attractiveness ratings when comparing AI-generated faces to real ones.<p>
-                    </div>`
-        } else if (condition == "AI-less attractive") {
-            preamble_text = `<div style="text-align: center;">
-                    <p><b>Before you start!</b></p>
-                    </div>
-                    <div style="text-align: left;">
-                    <p>In a survey of 1,442 respondents, Johnson and Lee (2021) found that people <b>rated AI-generated faces as less attractive than real faces</b>. 
-                    This effect was later replicated in an experiment by Martínez and colleagues (2022), who reported a 34% reduction in attractiveness ratings when comparing AI-generated faces to real ones.<p>
-                    </div>`
+        if (condition == "More attractive") {
+            suggestion = `
+                    <h3 style='text-align: center; max-width: 1000px;'>Information</h3>
+                    <p style='max-width: 1000px;'>In a survey of 1,442 respondents, Johnson and Lee (2021) found that people on average <b>rated AI-generated faces as more beautiful than real faces</b>. 
+                    This effect was later replicated in an experiment by Martinez and colleagues (2022), who reported a 34% increase in attractiveness ratings when comparing AI-generated faces to real ones.<p>
+                    <p>Do you think you tend to follow a similar pattern?</p>
+                    `
+        } else if (condition == "Less attractive") {
+            suggestion = `
+                    <h3 style='text-align: center; max-width: 1000px;'>Information</h3>
+                    <p style='max-width: 1000px;'>In a survey of 1,442 respondents, Johnson and Lee (2021) found that people on average <b>rated AI-generated faces as less beautiful than real faces</b>. 
+                    This effect was later replicated in an experiment by Martinez and colleagues (2022), who reported a 34% decrease in attractiveness ratings when comparing AI-generated faces to real ones.<p>
+                    <p>Do you think you tend to follow a similar pattern?</p>
+                    `
+        } else {
+            suggestion = "<h3 style='text-align: center; max-width: 1000px;'>Before you start</h3>"
         }
+
         return {
             showQuestionNumbers: false,
-            completeText: "Continue",
+            completeText: "Start the experiment!",
             pages: [
                 {
                     elements: [
                         {
                             type: "html",
-                            html: preamble_text,
+                            html: suggestion,
                         },
                         {
-                            title: "Do you think you will find AI-generated faces more, less, or similarly attractive compared to real faces?",
+                            title: "Based on your experience, do you expect to find AI-generated faces more or less attractive compared to real faces?",
+                            description:
+                                "Note that our algorithm was designed and trained to generate realistic faces with no prompting related to beauty.",
                             name: "expectations",
                             type: "radiogroup",
-                            choices: ["More attractive", "Less attractive", "Similarly attractive"],
+                            choices: [
+                                "I expect to find AI-generated faces more attractive",
+                                "I expect to find AI-generated faces less attractive",
+                                "I expect to find AI-generated faces similarly attractive",
+                                "I have no expectations",
+                            ],
                             isRequired: true,
                         },
                     ],
@@ -222,19 +227,16 @@ const fiction_instructions2 = {
                         type: "html",
                         name: "Instructions",
                         html: `
-<h1>Instructions</h1>
+<h1>AI... or not?</h1>
+<h2>Instructions</h2>
 <div style="display: flex; gap: 20px; align-items: flex-start;">
     <div style="flex: 1; min-width: 100px;"> <img src="media/illustration_realitytask.jpg" alt="Is it AI or real?" style="max-width: 100%; height: auto; display: block;">
 </div>
 <div style="flex: 2; text-align: left;">
         <p><b>Thank you for staying with us so far!</b></p>
-        <p>There is <b>something important</b> we need to reveal... In the previous phase, some faces were <b style='color: #E91E63'>intentionally mislabelled</b> (we told you it was AI-generated when it was actually a real photograph, or vice versa)...</p>
-        <p>In this final phase, we want you to tell us <b>what <i>you</i> think is the correct category</b> of each image. We will briefly present all the faces once more, followed by one question:</p>
-        <ul>
-            <li> Do you think the face corresponds to an <b style="color: ${color_cues["Fiction"]}">AI-generated</b>' image or a real '<b style="color: ${color_cues["Reality"]}">Photograph?</b> Indicate your degree of <b>confidence</b> and certainty by moving the slider closer to the edges.</p></li>
-        </ul>
+        <p>There is <b>something important</b> we need to reveal... In the previous phase, the labels (<b style="color: ${color_cues["Fiction"]}">AI-generated</b>' or '<b style="color: ${color_cues["Reality"]}">Photograph</b>) were actually <b>mixed-up</b>! As a result, they were correct for some faces but wrong for others (e.g., the label said "AI" but the face was actually a photo, or vice versa).</p>
+        <p>In this final phase, we want you to try to identify <b>the correct category</b> of each image. We will briefly present all the faces once more, followed by one question about whether you think the face image is a real photograph from the original picture database or an AI-generated image</p>
         <p>Sometimes, it is hard to tell, but don't overthink it and <b>go with your gut feeling</b>. At the end, we will tell you if you were correct or wrong!</p>
-        <p>Press start once you are ready.</p>
     </div>
 </div>
 `,
@@ -312,7 +314,10 @@ var fiction_showimage1 = {
     stimulus: function () {
         return "stimuli/" + jsPsych.evaluateTimelineVariable("Item")
     },
-    trial_duration: 5000,
+    // Random duration (750ms - 3750ms)
+    trial_duration: function () {
+        return jsPsych.randomization.randomInt(750, 3750)
+    },
     choices: ["s"],
     stimulus_width: function () {
         return Math.floor(0.9 * Math.min(window.innerWidth, window.innerHeight))
@@ -515,7 +520,7 @@ var fiction_fixation2 = {
     // },
     stimulus: "<div  style='font-size:500%; position:fixed; text-align: center; top:50%; bottom:50%; right:20%; left:20%'>+</div>",
     choices: ["s"],
-    trial_duration: 750,
+    trial_duration: 500,
     save_trial_parameters: { trial_duration: true },
     data: { screen: "fiction_fixation2" },
 }
@@ -525,8 +530,12 @@ var fiction_showimage2 = {
     stimulus: function () {
         return "stimuli/" + jsPsych.evaluateTimelineVariable("Item")
     },
-    stimulus_width: Math.floor(0.9 * Math.min(window.innerWidth, window.innerHeight)),
-    stimulus_height: Math.floor(0.9 * Math.min(window.innerWidth, window.innerHeight)),
+    stimulus_width: function () {
+        return Math.floor(0.9 * Math.min(window.innerWidth, window.innerHeight))
+    },
+    stimulus_height: function () {
+        return Math.floor(0.9 * Math.min(window.innerWidth, window.innerHeight))
+    },
     trial_duration: 1500,
     choices: ["s"],
     save_trial_parameters: { trial_duration: true },
@@ -544,47 +553,59 @@ var fiction_showimage2 = {
 
 var fiction_ratings2 = {
     type: jsPsychSurvey,
-    survey_json: {
-        goNextPageAutomatic: false,
-        showQuestionNumbers: false,
-        showNavigationButtons: true,
-        title: function () {
-            return "Rating - " + Math.round(((fiction_trialnumber - 1) / stimuli.length) * 100) + "%"
-        },
-        pages: [
-            {
-                elements: [
-                    {
-                        type: "html",
-                        name: "Instructions",
-                        html: "The labels we showed you in the previous phase have been mixed up! Can you tell to what category each image belongs?",
-                    },
-                    {
-                        type: "slider",
-                        name: "Reality",
-                        title: "I think this face is...", // "Indicate your confidence that the image is a human or AI creation"
-                        description: "Indicate your confidence that the image is AI-generated or real",
-                        isRequired: true,
-                        // minWidth: "200%",
-                        // maxWidth: "200%",
-                        min: -100,
-                        max: 100,
-                        step: 1,
-                        customLabels: [
-                            {
-                                value: -100,
-                                text: "AI-generated",
-                            },
-                            {
-                                value: 100,
-                                text: "Photograph",
-                            },
-                        ],
-                        // defaultValue: 0,
-                    },
-                ],
-            },
-        ],
+    survey_json: function () {
+        return {
+            goNextPageAutomatic: false,
+            showQuestionNumbers: false,
+            showNavigationButtons: true,
+            title: "Picture " + (fiction_trialnumber - 1) + "/" + stimuli.length,
+            pages: [
+                {
+                    elements: [
+                        {
+                            type: "html",
+                            name: "Instructions",
+                            html: `
+<p class="responsive-box-for-survey">The labels we showed you in the previous phase have been mixed up! Can you tell to what category each image belongs?</p>
+<style>
+  .responsive-box-for-survey {
+    width: 100%;      /* default: take full screen width */
+    height: 1px;
+  }
+  @media (min-width: 600px) {
+    .responsive-box-for-survey {
+      width: 600px;   /* fixed width once screen is ≥600px */
+    }
+  }
+</style>`,
+                        },
+                        {
+                            type: "slider",
+                            name: "Reality",
+                            title: "I think this face is...", // "Indicate your confidence that the image is a human or AI creation"
+                            description: "Indicate your confidence that the image is AI-generated or real",
+                            isRequired: true,
+                            // minWidth: "200%",
+                            // maxWidth: "200%",
+                            min: -100,
+                            max: 100,
+                            step: 1,
+                            customLabels: [
+                                {
+                                    value: -100,
+                                    text: "AI-generated",
+                                },
+                                {
+                                    value: 100,
+                                    text: "Photograph",
+                                },
+                            ],
+                            // defaultValue: 0,
+                        },
+                    ],
+                },
+            ],
+        }
     },
     data: {
         screen: "fiction_ratings2",
@@ -605,25 +626,25 @@ var fiction_feedback1 = {
         description: "Before we start the second phase, we wanted to know your thoughts.",
         showQuestionNumbers: false,
         elements: [
-            {
-                type: "checkbox",
-                name: "Feedback_1",
-                title: "Face Attractiveness",
-                description: "Please select all that apply",
-                choices: [
-                    "Some faces were really attractive",
-                    "No face was particularly attractive",
-                    "AI-generated images were more attractive than the photos",
-                    "AI-generated images were less attractive than the photos",
-                ],
-                showOtherItem: true,
-                showSelectAllItem: false,
-                showNoneItem: false,
-            },
+            // {
+            //     type: "checkbox",
+            //     name: "Feedback_1",
+            //     title: "Face Attractiveness",
+            //     description: "Please select all that apply",
+            //     choices: [
+            //         "Some faces were really attractive",
+            //         "No face was particularly attractive",
+            //         "AI-generated images were more attractive than the photos",
+            //         "AI-generated images were less attractive than the photos",
+            //     ],
+            //     showOtherItem: false,
+            //     showSelectAllItem: false,
+            //     showNoneItem: false,
+            // },
             {
                 type: "checkbox",
                 name: "Feedback_2",
-                title: "AI-Generation Algorithm",
+                title: "Feedback about the AI-Generation algorithm",
                 description: "Please select all that apply",
                 choices: [
                     "The difference between the photos and the AI-generated images was obvious",
@@ -634,7 +655,7 @@ var fiction_feedback1 = {
                     "I feel like all the images were photos",
                     "I feel like all the images were AI-generated",
                 ],
-                showOtherItem: true,
+                showOtherItem: false,
                 showSelectAllItem: false,
                 showNoneItem: false,
             },

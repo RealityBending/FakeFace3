@@ -76,7 +76,7 @@ function make_bait(items, required = true, ticks = ["Disagree", "Agree"]) {
         },
         {
             title: "How frequently do you use Artificial Intelligence (AI) tools or technologies in your daily life? ",
-            description: "This includes tools like ChatGPT, image or art generators, and AI assistants.",
+            description: "This includes tools like ChatGPT, image or art generators, and other AI assistants.",
             name: "BAIT_AI_Use",
             type: "radiogroup",
             isRequired: required,
@@ -151,7 +151,7 @@ function make_mist(items) {
         {
             type: "html",
             name: "MIST_instructions",
-            html: "The following news headlines are a combination of <b>real</b>, published headlines and <b>fake</b> headlines designed to look like real ones. <p>Please read the following news headlines and rate them on a scale from 'Fake' to 'Real' with the middle meaning unsure and closer to each end of the scale indicating greater confidence in your answer.",
+            html: "<p style='max-width: 800px'>The following news headlines are a combination of <b>real</b>, published headlines and <b>fake</b> headlines designed to look like real ones. Please read the following news headlines and rate them on a scale from 'Fake' to 'Real' with the middle meaning unsure and closer to each end of the scale indicating greater confidence in your answer.</p>",
         },
     ]
 
@@ -162,16 +162,16 @@ function make_mist(items) {
             name: key,
             type: "slider",
             isRequired: true,
-            min: -1,
-            max: 1,
-            step: 0.01,
+            min: -100,
+            max: 100,
+            step: 1,
             customLabels: [
                 {
-                    value: -1,
+                    value: -100,
                     text: "False",
                 },
                 {
-                    value: 1,
+                    value: 100,
                     text: "True",
                 },
             ],
@@ -216,7 +216,18 @@ const BRS_items = {
     BRS_8: "Consciousness is the growth of coherence, and of us",
     BRS_9: "We are in the midst of a high-frequency blossoming of interconnectedness that will give us access to the quantum soup itself",
     BRS_10: "Today, science tells us that the essence of nature is joy",
-    BRS_Attention: "Wholeness is found in simple choices, select all the way to the right to show you are paying attention",
+    // Below are the 10 "control" prototypically profound items from Pennycook et al. (2015)
+    BRS_11: "Your teacher can open the door, but you must enter by yourself.",
+    BRS_12: "The creative adult is the child who survived.",
+    BRS_13: "A river cuts through a rock, not because of its power but its persistence.",
+    BRS_14: "All endings are also beginnings. We just don't know it at the time.",
+    BRS_15: "Art and love are the same thing: It's the process of seeing yourself in things that are not you.",
+    BRS_16: "At the centre of your being you have the answer; you know who you are and you know what you want.",
+    BRS_17: "A wet person does not fear the rain.",
+    BRS_18: "Forgiveness means letting go of the hope for a better past.",
+    BRS_19: "Only those who will risk going too far can possibly find out how far one can go.",
+    BRS_20: "I wonder how many people I've looked at all my life and never seen.",
+    BRS_Attention: "Wholeness is found in simple choices, select all the way to the left to show you are paying attention",
 }
 
 function make_BRS(items) {
@@ -226,7 +237,7 @@ function make_BRS(items) {
         {
             type: "html",
             name: "BRS_instructions",
-            html: "We are interested in how people experience the profound. Below are a series of statements taken from relevant websites. Please read each statement and take a moment to think about what it might mean. Then please rate how “profound” you think it is. Profound means “of deep meaning; of great and broadly inclusive significance.",
+            html: "<p style='max-width: 800px'>We are interested in how people experience the profound. Below are a series of statements taken from relevant websites. Please read each statement and take a moment to think about what it might mean. Then please rate how \"profound\" <b><i>you</i></b> find it to be. Profound means of <b>deep meaning; of great and broadly inclusive significance.</b></p>",
         },
     ]
 
