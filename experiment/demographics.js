@@ -163,7 +163,8 @@ const experiment_feedback = {
     type: jsPsychSurvey,
     survey_json: {
         title: "Feedback",
-        description: "It is the end of the experiment! Don't hesitate to leave us a feedback.",
+        description:
+            "It is almost the end of the experiment! Your data will be saved in the next step and you will be given information but this study. But before, don't hesitate to leave us some feedback.",
         completeText: "Next",
         showQuestionNumbers: false,
         pages: [

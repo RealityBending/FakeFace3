@@ -151,7 +151,7 @@ function make_mist(items) {
         {
             type: "html",
             name: "MIST_instructions",
-            html: "<p style='max-width: 800px'>The following news headlines are a combination of <b>real</b>, published headlines and <b>fake</b> headlines designed to look like real ones. Please read the following news headlines and rate them on a scale from 'False' to 'True' with the middle meaning unsure and closer to each end of the scale indicating greater confidence in your answer.</p>",
+            html: "<p style='max-width: 800px'>The following news headlines are a combination of <b>real</b>, published headlines and <b>fake</b> headlines designed to look like real ones. Please read the following news headlines and rate them on a scale from 'Fake News' to 'Real News' with the middle meaning unsure and closer to each end of the scale indicating greater confidence in your answer.</p>",
         },
     ]
 
@@ -168,11 +168,11 @@ function make_mist(items) {
             customLabels: [
                 {
                     value: -100,
-                    text: "False",
+                    text: "Fake News",
                 },
                 {
                     value: 100,
-                    text: "True",
+                    text: "Real News",
                 },
             ],
             // defaultValue: 0,
