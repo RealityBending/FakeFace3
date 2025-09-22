@@ -164,7 +164,7 @@ const experiment_feedback = {
     survey_json: {
         title: "Feedback",
         description:
-            "It is almost the end of the experiment! Your data will be saved in the next step and you will be given information but this study. But before, don't hesitate to leave us some feedback.",
+            "It is almost the end of the experiment! Your data will be saved in the next step and you will be given information about this study. But before, don't hesitate to leave us some feedback.",
         completeText: "Next",
         showQuestionNumbers: false,
         pages: [

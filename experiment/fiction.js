@@ -566,7 +566,7 @@ var fiction_ratings2 = {
                             type: "html",
                             name: "Instructions",
                             html: `
-<p class="responsive-box-for-survey">The labels we showed you in the previous phase have been mixed up! Can you tell to what category each image belongs?</p>
+<p class="responsive-box-for-survey">The labels we showed you in the previous phase have been mixed up! Can you tell which category each image belongs to?</p>
 <style>
   .responsive-box-for-survey {
     width: 100%;      /* default: take full screen width */
