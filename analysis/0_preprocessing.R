@@ -107,7 +107,7 @@ for (file in files){
   data_ppt$Experiment_Feedback <- ifelse(is.null(fb_exp$Feedback_Text), NA, fb_exp$Feedback_Text)
   
   
-  # Questionnaires 
+  # Questionnaires ==========================================================================
   bait <- as.data.frame(jsonlite::fromJSON(rawdata[
     rawdata$screen == "questionnaire_bait",
     "response"
@@ -117,15 +117,15 @@ for (file in files){
     data_ppt$BAIT_AI_Use <- NA
   }
   
-  mist <- as.data.frame(jsonlite::fromJSON(rawdata[rawdata$screen == "questionnaire_MIST","response"]))
-  
-  
-  
+  mist <-jsonlite::fromJSON(rawdata[rawdata$screen == "questionnaire_MIST","response"])
+  mist <- mist[!sapply(mist, is.null)]
   data_ppt <- cbind(data_ppt, mist)
 
+  BRS <- jsonlite::fromJSON(rawdata[rawdata$screen == "questionnaire_BRS","response"])
+  BRS <- BRS[!sapply(BRS, is.null)]
+  data_ppt <- cbind(data_ppt, BRS)
   
-  
-  # Task
+  # Task=====================================================================================
   cue1 <- rawdata[rawdata$screen == "fiction_cue", ]
   img1 <- rawdata[rawdata$screen == "fiction_image1", ]
   resp1 <- sapply(
