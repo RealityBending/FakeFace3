@@ -126,6 +126,8 @@ for (file in files){
   data_ppt <- cbind(data_ppt, BRS)
   
   # Task=====================================================================================
+  
+  # phase 1
   cue1 <- rawdata[rawdata$screen == "fiction_cue", ]
   img1 <- rawdata[rawdata$screen == "fiction_image1", ]
   resp1 <- sapply(
@@ -141,6 +143,7 @@ for (file in files){
     USE.NAMES = FALSE
   )
   resp1 <- do.call(rbind, resp1)
+  
   img2 <- rawdata[rawdata$screen == "fiction_image2", ]
   resp2 <- sapply(
     rawdata[rawdata$screen == "fiction_ratings2", "response"],
