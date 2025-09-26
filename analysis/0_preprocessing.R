@@ -11,8 +11,9 @@ files <- list.files(path, pattern = "*.csv")
 # Progress bar
 # progbar <- progress_bar$new(total = length(files))
 
-all_ppt <- data.frame()
-all_task <- data.frame()
+
+alldata <- list()
+alldata_task <- list()
 all_bait_names <- c()
 
 for (file in files){
@@ -26,8 +27,10 @@ for (file in files){
   # Initialize participant-level data
   dat <- rawdata[rawdata$screen == "browser_info", ]
   
+  participant <- gsub(".csv", "", rev(strsplit(file, "/")[[1]])[1]) # Filename without extension
+  
   data_ppt <- data.frame(
-    Participant = sub("\\.csv$", "", file),
+    Participant = participant,
     Experiment_StartDate = as.POSIXct(paste(dat$date, dat$time), format = "%d/%m/%Y %H:%M:%S"),
     Experiment_Duration = rawdata[rawdata$screen == "demographics_debrief", "time_elapsed"] / 1000 / 60,
     Browser_Version = paste(dat$browser, dat$browser_version),
@@ -130,17 +133,25 @@ for (file in files){
   # phase 1
   cue1 <- rawdata[rawdata$screen == "fiction_cue", ]
   img1 <- rawdata[rawdata$screen == "fiction_image1", ]
-  resp1 <- sapply(
+  resp1 <- lapply(
     rawdata[rawdata$screen == "fiction_ratings1", "response"],
     \(x) {
-      x <- as.data.frame(jsonlite::fromJSON(x))
-      if(!"AttentionCheck" %in% names(x)) {
-        x$AttentionCheck <- NA
+      y <- jsonlite::fromJSON(x, simplifyVector = TRUE)
+      y <- as.list(y)
+      
+      # Keep only the 4 columns you care about
+      fields <- c("Attractiveness", "Beauty", "Symmetry", "AttentionCheck")
+      
+      # Fill missing ones with NA
+      for (nm in fields) {
+        if (!nm %in% names(y) || length(y[[nm]]) == 0) {
+          y[[nm]] <- NA
+        }
       }
-      x
-    },
-    simplify = FALSE,
-    USE.NAMES = FALSE
+      
+      # Return as one-row data frame
+      as.data.frame(y[fields], stringsAsFactors = FALSE)
+    }
   )
   resp1 <- do.call(rbind, resp1)
   
@@ -162,4 +173,62 @@ for (file in files){
     print("Responses not all null!")
     break
   }
+  # n_trials <- length(img1$item)
+  
+  data_task <- data.frame(
+    Participant = participant,
+    Condition = cue1$condition,
+    Item = img1$item,
+    Trial1 = img1$trial_number,
+    CueColor = tools::toTitleCase(cue1$color),
+    ScreenWidth = img1$window_width,
+    ScreenHeight = img1$window_height,
+    Attractiveness  = resp1$Attractiveness ,
+    Beauty  = resp1$Beauty ,
+    Symmetry = resp1$Symmetry
+  ) |>
+    merge(
+      data.frame(
+        Item = img2$item,
+        Trial2 = img2$trial_number,
+        Reality = resp2$Reality
+      ),
+      sort = FALSE
+    )
+  
+  # Attention check
+  taskchecks <- ifelse(is.na(resp1$AttentionCheck), NA, 0)
+  taskchecks <- ifelse(resp1$AttentionCheck =="AI-Generated" & cue1$condition == "Fiction", 1, taskchecks)
+  taskchecks <- ifelse(resp1$AttentionCheck=="Photograph" & cue1$condition == "Reality", 1, taskchecks)
+  data_ppt$Task_AttentionCheck <- mean(taskchecks, na.rm = TRUE)
+
+  # Save all
+  alldata[[file]] <- data_ppt
+  alldata_task[[file]] <- data_task
 }
+
+alldata <- do.call(rbind, alldata)
+alldata_task <- do.call(rbind, alldata_task)
+
+# Attention checks --------------------------------------------------------
+checks <- data.frame(
+  BAIT = alldata$BAIT_AttentionCheck / 6,
+  BRS = alldata$Task_AttentionCheck,
+  TASK = 
+)
+# Weighted mean (MINT + BAIT + TASK * 6)
+checks$Score <- apply(as.matrix(checks), 1, \(x) weighted.mean(x, w = c(1, 1, 6), na.rm  = TRUE))
+# checks$Score <- rowMeans(checks)
+checks$AttentionScore <- alldata$AttentionScore
+checks$ID <- alldata$ID
+checks$Experiment_Duration <- alldata$Experiment_Duration
+checks$Reward <- alldata$Reward
+checks <- checks[!is.na(checks$ID), ]
+checks <- checks[order(checks$Score, decreasing = TRUE), ]
+checks
+
+hist(checks$AttentionScore)
+score <- checks[!checks$ID %in% c("os", "fw", "dm"), "AttentionScore"]
+hist(score)
+# How many ppt below 0.75
+sum(score < 0.6) / length(score)
