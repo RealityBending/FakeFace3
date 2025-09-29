@@ -2,7 +2,7 @@ library(jsonlite)
 # library(progress)
 
 # path for data
-path <- "C:/Users/asf25/Documents/data/"
+path <- "C:/Users/asf25/Box/FakeFace3/"
 
 # JsPsych Experiment ----------------------------
 
@@ -12,12 +12,11 @@ files <- list.files(path, pattern = "*.csv")
 # progbar <- progress_bar$new(total = length(files))
 
 
-alldata <- list()
-alldata_task <- list()
-all_bait_names <- c()
+alldata <-  data.frame()
+alldata_task <-  data.frame()
 
 for (file in files){
-  file <- "c40cr9kyq8.csv"
+  # file <- "purbdrftby.csv"
   # progbar$tick()
   rawdata <- read.csv(paste0(path, "/", file))
   message(paste("\nProcessing:", file))
@@ -68,7 +67,7 @@ for (file in files){
   data_ppt$Feedback_LabelsAllPhotos <- FALSE
   data_ppt$Feedback_LabelsAllAI <- FALSE
   data_ppt$Feedback_ConfidenceReal <- NA
-  data_ppt$Feedback_ConfidenceAI <- NA
+  data_ppt$Feedback_ConfidenceFake<- NA
   
   if ("Feedback_2" %in% names(fb)) {
     if (any(grepl("was obvious", fb$Feedback_2))) {
@@ -87,7 +86,7 @@ for (file in files){
       data_ppt$Feedback_LabelsReversed <- TRUE
     }
     if (any(grepl("images were photos", fb$Feedback_2))) {
-      data_ppt$Feedback_LabelsAllReal <- TRUE
+      data_ppt$Feedback_LabelsAllPhotos <- TRUE
     }
     if (any(grepl("images were AI-generated", fb$Feedback_2))) {
       data_ppt$Feedback_LabelsAllAI <- TRUE
@@ -96,8 +95,8 @@ for (file in files){
   if (!is.null(fb$Feedback_2_ConfidenceReal)) {
     data_ppt$Feedback_ConfidenceReal <- fb$Feedback_2_ConfidenceReal
   }
-  if (!is.null(fb$Feedback_2_ConfidenceReal)) {
-    data_ppt$Feedback_ConfidenceAI <- fb$Feedback_2_ConfidenceReal
+  if (!is.null(fb$Feedback_2_ConfidenceFake)) {
+    data_ppt$Feedback_ConfidenceFake <- fb$Feedback_2_ConfidenceFake
   }
   
   
@@ -173,8 +172,7 @@ for (file in files){
     print("Responses not all null!")
     break
   }
-  # n_trials <- length(img1$item)
-  
+
   data_task <- data.frame(
     Participant = participant,
     Condition = cue1$condition,
@@ -203,32 +201,27 @@ for (file in files){
   data_ppt$Task_AttentionCheck <- mean(taskchecks, na.rm = TRUE)
 
   # Save all
-  alldata[[file]] <- data_ppt
-  alldata_task[[file]] <- data_task
+  alldata <- rbind(alldata, data_ppt)
+  alldata_task <- rbind(alldata_task, data_task)
 }
 
-alldata <- do.call(rbind, alldata)
-alldata_task <- do.call(rbind, alldata_task)
+if (nrow(alldata[duplicated(alldata), ]) > 0) {
+  stop("Duplicates detected!")
+}
 
-# Attention checks --------------------------------------------------------
-checks <- data.frame(
-  BAIT = alldata$BAIT_AttentionCheck / 6,
-  BRS = alldata$Task_AttentionCheck,
-  TASK = 
-)
-# Weighted mean (MINT + BAIT + TASK * 6)
-checks$Score <- apply(as.matrix(checks), 1, \(x) weighted.mean(x, w = c(1, 1, 6), na.rm  = TRUE))
-# checks$Score <- rowMeans(checks)
-checks$AttentionScore <- alldata$AttentionScore
-checks$ID <- alldata$ID
-checks$Experiment_Duration <- alldata$Experiment_Duration
-checks$Reward <- alldata$Reward
-checks <- checks[!is.na(checks$ID), ]
-checks <- checks[order(checks$Score, decreasing = TRUE), ]
-checks
+# Anonymize ---------------------------------------------------------------
+alldata$ID <- NULL
+alldata$AttentionScore <- NULL
 
-hist(checks$AttentionScore)
-score <- checks[!checks$ID %in% c("os", "fw", "dm"), "AttentionScore"]
-hist(score)
-# How many ppt below 0.75
-sum(score < 0.6) / length(score)
+# Generate IDs
+ids <- paste0("S", format(sprintf("%03d", 1:nrow(alldata))))
+# Sort Participant according to date and assign new IDs
+names(ids) <- alldata$Participant[order(alldata$Experiment_StartDate)]
+# Replace IDs
+alldata$Participant <- ids[alldata$Participant]
+alldata_task$Participant <- ids[alldata_task$Participant]
+alldata_task <- alldata_task[, c(2,3,1,4,5,6,7,8,9,10,11,12)]
+
+
+write.csv(alldata, "../data/rawdata_participants.csv", row.names = FALSE)
+write.csv(alldata_task, "../data/rawdata_task.csv", row.names = FALSE)
