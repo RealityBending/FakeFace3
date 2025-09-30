@@ -16,7 +16,7 @@ alldata <-  data.frame()
 alldata_task <-  data.frame()
 
 for (file in files){
-  # file <- "purbdrftby.csv"
+  # file <- "4ljjkg37z7.csv"
   # progbar$tick()
   rawdata <- read.csv(paste0(path, "/", file))
   message(paste("\nProcessing:", file))
@@ -52,7 +52,8 @@ for (file in files){
   
   #Sexual orientation
   demog$SexualOrientation <- ifelse(!is.null(demog$SexualOrientation), demog$SexualOrientation, NA)
-  demog$SexualOrientation <- ifelse(demog$SexualOrientation == "other", demog$`SexualOrientation`, demog$SexualOrientation)
+  demog$SexualOrientation <- ifelse(demog$SexualOrientation == "other", demog$`SexualOrientation-Comment`, demog$SexualOrientation)
+  demog$`SexualOrientation-Comment` <- NULL
   
   demog <- as.data.frame(demog)
   data_ppt <- cbind(data_ppt, demog)
@@ -199,6 +200,10 @@ for (file in files){
   taskchecks <- ifelse(resp1$AttentionCheck =="AI-Generated" & cue1$condition == "Fiction", 1, taskchecks)
   taskchecks <- ifelse(resp1$AttentionCheck=="Photograph" & cue1$condition == "Reality", 1, taskchecks)
   data_ppt$Task_AttentionCheck <- mean(taskchecks, na.rm = TRUE)
+  
+  # check column differences
+  setdiff(names(alldata), names(data_ppt))  # columns in df1 but not in df2
+  setdiff(names(data_ppt), names(alldata))  # columns in df2 but not in df1
 
   # Save all
   alldata <- rbind(alldata, data_ppt)
@@ -225,3 +230,12 @@ alldata_task <- alldata_task[, c(2,3,1,4,5,6,7,8,9,10,11,12)]
 
 write.csv(alldata, "../data/rawdata_participants.csv", row.names = FALSE)
 write.csv(alldata_task, "../data/rawdata_task.csv", row.names = FALSE)
+
+
+
+
+#notes
+# -demog - duration
+# -condition (control, ....)
+# -total/means/sum of scores for questionnaires 
+# -
