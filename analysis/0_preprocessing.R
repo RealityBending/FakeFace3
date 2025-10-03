@@ -16,7 +16,7 @@ alldata <-  data.frame()
 alldata_task <-  data.frame()
 
 for (file in files){
-  # file <- "4ljjkg37z7.csv"
+  # file <- "1apgnzjga0.csv"
   # progbar$tick()
   rawdata <- read.csv(paste0(path, "/", file))
   message(paste("\nProcessing:", file))
@@ -32,12 +32,7 @@ for (file in files){
     Participant = participant,
     Experiment_StartDate = as.POSIXct(paste(dat$date, dat$time), format = "%d/%m/%Y %H:%M:%S"),
     Experiment_Duration = rawdata[rawdata$screen == "demographics_debrief", "time_elapsed"] / 1000 / 60,
-    Browser_Version = paste(dat$browser, dat$browser_version),
-    Mobile = dat$mobile,
-    Platform = dat$os,
-    Screen_Width = dat$screen_width,
-    Screen_Height = dat$screen_height
-  )
+    Mobile = dat$mobile  )
   
   demog <- jsonlite::fromJSON(rawdata[rawdata$screen == "demographic_questions", ]$response)
   
@@ -55,8 +50,22 @@ for (file in files){
   demog$SexualOrientation <- ifelse(demog$SexualOrientation == "other", demog$`SexualOrientation-Comment`, demog$SexualOrientation)
   demog$`SexualOrientation-Comment` <- NULL
   
+  # Demand characteristics
+  
+  # check if they saw fiction_expectations
+  if (any(rawdata$screen == "fiction_expectations")) {
+    fx_row <- subset(rawdata, screen == "fiction_expectations")[1, ]
+    demog$DemandCharcateristics_Condition <- fx_row$condition
+    demog$Fiction_Expectations <- jsonlite::fromJSON(fx_row$response)$expectations
+  } else {
+    # they must be Control
+    demog$DemandCharcateristics_Condition <- "Control"
+    demog$Fiction_Expectations <- NA
+  }
+  
   demog <- as.data.frame(demog)
   data_ppt <- cbind(data_ppt, demog)
+  
   
   # Fiction Feedback
   fb <- jsonlite::fromJSON(rawdata[rawdata$screen == "fiction_feedback1","response"])
@@ -111,6 +120,8 @@ for (file in files){
   
   
   # Questionnaires ==========================================================================
+  
+  ## BAIT
   bait <- as.data.frame(jsonlite::fromJSON(rawdata[
     rawdata$screen == "questionnaire_bait",
     "response"
@@ -120,13 +131,32 @@ for (file in files){
     data_ppt$BAIT_AI_Use <- NA
   }
   
+  ## MIST
   mist <-jsonlite::fromJSON(rawdata[rawdata$screen == "questionnaire_MIST","response"])
   mist <- mist[!sapply(mist, is.null)]
-  data_ppt <- cbind(data_ppt, mist)
 
+  mist_vec <- unlist(mist)
+  is_true <- mist_vec > 0   # TRUE if positive (said "True"), FALSE if negative (said "False")
+  # Determine if each item is "real" or "fake"
+  is_real <- grepl("real", names(mist_vec), ignore.case = TRUE)
+  is_fake <- grepl("fake", names(mist_vec), ignore.case = TRUE)
+  correct <- (is_real & is_true) | (is_fake & !is_true)
+  # mist$correctness <- correct
+  mist$total <- sum(correct)
+
+  data_ppt <- cbind(data_ppt, mist)
+  
+  ## BRS
   BRS <- jsonlite::fromJSON(rawdata[rawdata$screen == "questionnaire_BRS","response"])
   BRS <- BRS[!sapply(BRS, is.null)]
+  
+  brs_vect <- unlist(BRS)
+  BRS$BRS_Attention <- ifelse(BRS$BRS_Attention %in% c(1, 2), 1, 0)
+  BRS$total <- mean(brs_vect[names(brs_vect) != "BRS_Attention"])  
+  
   data_ppt <- cbind(data_ppt, BRS)
+  
+  
   
   # Task=====================================================================================
   
@@ -235,7 +265,10 @@ write.csv(alldata_task, "../data/rawdata_task.csv", row.names = FALSE)
 
 
 #notes
-# -demog - duration
-# -condition (control, ....)
 # -total/means/sum of scores for questionnaires 
-# -
+
+# Questions
+# should I remove the individual scores for MIST to not overwhelm and keep only the correctness of answers?
+# attention checks:
+  # BRS - if 1 and 2 then - 1 (i.e., passed) anything else == 0 (i.e., failed)
+  # BAIT - 
