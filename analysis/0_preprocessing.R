@@ -16,7 +16,7 @@ alldata <-  data.frame()
 alldata_task <-  data.frame()
 
 for (file in files){
-  # file <- "1apgnzjga0.csv"
+  file <- "1apgnzjga0.csv"
   # progbar$tick()
   rawdata <- read.csv(paste0(path, "/", file))
   message(paste("\nProcessing:", file))
@@ -121,17 +121,38 @@ for (file in files){
   
   # Questionnaires ==========================================================================
   
-  ## BAIT
-  bait <- as.data.frame(jsonlite::fromJSON(rawdata[
-    rawdata$screen == "questionnaire_bait",
-    "response"
-  ]))
+  ## BAIT-----------------------------------------------------------
+  bait <- as.data.frame(jsonlite::fromJSON(rawdata[rawdata$screen == "questionnaire_bait","response"]))
+  bait$BAIT_AttentionCheck <- ifelse(bait$BAIT_AttentionCheck %in% c(5, 6), 1, 0)
+
+  
+  # Reverse-score negatively worded items (0–6 scale)
+  bait$BAIT_2_ImagesIssues_rev <- 6 - bait$BAIT_2_ImagesIssues
+  bait$BAIT_3_VideosIssues_rev <- 6 - bait$BAIT_3_VideosIssues
+  bait$BAIT_8_TextIssues_rev   <- 6 - bait$BAIT_8_TextIssues
+  bait$BAIT_13_ArtIssues_rev   <- 6 - bait$BAIT_13_ArtIssues
+  bait$BAIT_9_Dangerous_rev    <- 6 - bait$BAIT_9_Dangerous
+  bait$BAIT_10_Worry_rev       <- 6 - bait$BAIT_10_Worry
+  
+  bait$BAIT_Images   <- rowMeans(bait[, c("BAIT_1_ImagesRealistic", "BAIT_2_ImagesIssues_rev")])
+  bait$BAIT_Videos   <- rowMeans(bait[, c("BAIT_4_VideosRealistic", "BAIT_3_VideosIssues_rev")])
+  bait$BAIT_Text     <- rowMeans(bait[, c("BAIT_7_TextRealistic", "BAIT_8_TextIssues_rev")])
+  bait$BAIT_Art      <- rowMeans(bait[, c("BAIT_14_ArtRealistic", "BAIT_13_ArtIssues_rev")])
+  bait$BAIT_Attitude <- rowMeans(bait[, c("BAIT_11_Exciting", "BAIT_12_Benefit", "BAIT_9_Dangerous_rev", "BAIT_10_Worry_rev")])
+  bait$BAIT_Reality  <- rowMeans(bait[, c("BAIT_5_ImitatingReality", "BAIT_6_EnvironmentReal")])
+  
+  bait$BAIT_total <- rowMeans(bait[, c(
+    "BAIT_Images", "BAIT_Videos", "BAIT_Text",
+    "BAIT_Art", "BAIT_Attitude", "BAIT_Reality"
+  )])
+  
   data_ppt <- cbind(data_ppt, bait)
   if(!"BAIT_AI_Use" %in% names(bait)) {
     data_ppt$BAIT_AI_Use <- NA
   }
   
-  ## MIST
+  
+  ## MIST-------------------------------------------------------
   mist <-jsonlite::fromJSON(rawdata[rawdata$screen == "questionnaire_MIST","response"])
   mist <- mist[!sapply(mist, is.null)]
 
@@ -146,17 +167,17 @@ for (file in files){
 
   data_ppt <- cbind(data_ppt, mist)
   
-  ## BRS
+  ## BRS-----------------------------------------------------------
   BRS <- jsonlite::fromJSON(rawdata[rawdata$screen == "questionnaire_BRS","response"])
   BRS <- BRS[!sapply(BRS, is.null)]
   
   brs_vect <- unlist(BRS)
   BRS$BRS_Attention <- ifelse(BRS$BRS_Attention %in% c(1, 2), 1, 0)
-  BRS$total <- mean(brs_vect[names(brs_vect) != "BRS_Attention"])  
-  
   data_ppt <- cbind(data_ppt, BRS)
   
+  ## Attention checks 
   
+  data_ppt$Questionnaires_AttentionCheck <- (bait$BAIT_AttentionCheck + BRS$BRS_Attention)/2
   
   # Task=====================================================================================
   
@@ -257,12 +278,10 @@ alldata$Participant <- ids[alldata$Participant]
 alldata_task$Participant <- ids[alldata_task$Participant]
 alldata_task <- alldata_task[, c(2,3,1,4,5,6,7,8,9,10,11,12)]
 
+alldata <- 
 
 write.csv(alldata, "../data/rawdata_participants.csv", row.names = FALSE)
 write.csv(alldata_task, "../data/rawdata_task.csv", row.names = FALSE)
-
-
-
 
 #notes
 # -total/means/sum of scores for questionnaires 
@@ -270,5 +289,5 @@ write.csv(alldata_task, "../data/rawdata_task.csv", row.names = FALSE)
 # Questions
 # should I remove the individual scores for MIST to not overwhelm and keep only the correctness of answers?
 # attention checks:
-  # BRS - if 1 and 2 then - 1 (i.e., passed) anything else == 0 (i.e., failed)
-  # BAIT - 
+  # BAIT - 5,6 encoded as pass
+  # BRS - 1,2 encoded as pass
