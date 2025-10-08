@@ -16,7 +16,7 @@ alldata <-  data.frame()
 alldata_task <-  data.frame()
 
 for (file in files){
-  file <- "1apgnzjga0.csv"
+  # file <- "1apgnzjga0.csv"
   # progbar$tick()
   rawdata <- read.csv(paste0(path, "/", file))
   message(paste("\nProcessing:", file))
@@ -163,16 +163,19 @@ for (file in files){
   is_fake <- grepl("fake", names(mist_vec), ignore.case = TRUE)
   correct <- (is_real & is_true) | (is_fake & !is_true)
   # mist$correctness <- correct
-  mist$total <- sum(correct)
+  mist$MIST_totalcorrect <- sum(correct)
 
   data_ppt <- cbind(data_ppt, mist)
   
   ## BRS-----------------------------------------------------------
   BRS <- jsonlite::fromJSON(rawdata[rawdata$screen == "questionnaire_BRS","response"])
   BRS <- BRS[!sapply(BRS, is.null)]
-  
   brs_vect <- unlist(BRS)
+  brs_no_attention <- brs_vect[names(brs_vect) != "BRS_Attention"]
+  
+  BRS$BRS_Total <- mean(brs_no_attention)
   BRS$BRS_Attention <- ifelse(BRS$BRS_Attention %in% c(1, 2), 1, 0)
+  
   data_ppt <- cbind(data_ppt, BRS)
   
   ## Attention checks 
@@ -219,12 +222,20 @@ for (file in files){
   )
   resp2 <- do.call(rbind, resp2)
   
-  # Make sure no skipping occured
-  if (!all(img1$response == "null")) {
-    print("Responses not all null!")
-    break
+  # Count how many images were skipped (non-"null" responses)
+  n_skipped <- sum(img1$response != "null")
+  
+  # If any were skipped, add a row to skipped_images
+  if (n_skipped > 0) {
+    skipped_images <- rbind(
+      skipped_images,
+      data.frame(
+        participant = participant_name,
+        skipped = n_skipped
+      )
+    )
   }
-
+  
   data_task <- data.frame(
     Participant = participant,
     Condition = cue1$condition,
