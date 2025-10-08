@@ -24,7 +24,7 @@ library(ggside)
 
 ```{r}
 
-df <-read.csv("../data/rawdata_participants.csv") |>
+df <-read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace3/refs/heads/main/data/rawdata_participants.csv") |>
   mutate(Gender = case_when(
            Gender == "Female" ~ "Woman",
            Gender == "Male" ~ "Man",
@@ -42,7 +42,7 @@ df <-read.csv("../data/rawdata_participants.csv") |>
          TRUE ~ Ethnicity)
          ) 
 
-dftask <- read.csv("../data/rawdata_task.csv") |>
+dftask <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace3/refs/heads/main/data/rawdata_task.csv") |>
   full_join(
     df[c("Participant", "Gender", "SexualOrientation")],
     by= join_by("Participant")
