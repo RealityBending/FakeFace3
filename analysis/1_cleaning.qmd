@@ -1,26 +1,329 @@
 ---
 title: "1_Cleaning"
-format: html
-editor: visual
+editor: source
+editor_options: 
+  chunk_output_type: console
+format:
+  html:
+    code-fold: true
+    self-contained: true
+    toc: true
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Data Preparation 
 
 ```{r}
-1 + 1
-```
+#| message: false
+#| warning: false
 
-You can add options to executable code like this
+library(tidyverse)
+library(easystats)
+library(patchwork)
+library(ggside)
+```
 
 ```{r}
-#| echo: false
-2 * 2
+
+df <-read.csv("../data/rawdata_participants.csv") |>
+  mutate(Gender = case_when(
+           Gender == "Female" ~ "Woman",
+           Gender == "Male" ~ "Man",
+           Gender == "Genderfluid" ~ "Non-binary",
+           TRUE ~ Gender),
+         SexualOrientation = case_when(
+           SexualOrientation == "asexual" ~ "Asexual",
+           SexualOrientation == "queer" ~ "Queer",
+            is.na(SexualOrientation) ~ "Prefer not to say",
+           TRUE ~ SexualOrientation),
+         Ethnicity = case_when(
+           Ethnicity == "portuguese" ~ "White",
+           Ethnicity == "latino (brazilian) and white (portuguese)" ~ "Mixed",
+           Ethnicity == "middle eastern/ european" ~ "Mixed",
+         TRUE ~ Ethnicity)
+         ) 
+
+dftask <- read.csv("../data/rawdata_task.csv") |>
+  full_join(
+    df[c("Participant", "Gender", "SexualOrientation")],
+    by= join_by("Participant")
+  ) |>
+  mutate(Condition = ifelse(Condition == "Reality", "Photograph", "AI-Generated")) 
+
+dftask <- filter(dftask, Participant %in% unique(df$Participant))
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+The initial sample consisted of `r report::report_participants(df, age="Age", gender="Gender", education="Education", race = "Ethnicity")`, for a total trial number of `r nrow(dftask)`.
+
+## Feedback
+
+### Enjoyment
+
+```{r}
+
+df |> 
+  summarize(n = n(), .by="Experiment_Enjoyment") |> 
+  arrange(desc(Experiment_Enjoyment)) |>
+  mutate(Experiment_Enjoyment = fct_rev(as.factor(Experiment_Enjoyment))) |> 
+  ggplot(aes(x=0, y=n)) +
+  geom_bar(aes(fill=Experiment_Enjoyment), stat="identity") +
+  scale_fill_manual(values=c("#4CAF50", "#8BC34A", "#CDDC39", "#FF9800", "#F44336")) +
+  scale_x_continuous(expand=c(0, 0)) +
+  coord_flip() +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        axis.text.y = element_blank()) +
+  labs(x="Answer", y = "Participants", title = "Did you enjoy doing this experiment?")
+
+
+```
+### Proportions
+
+```{r}
+
+df |> 
+  select(starts_with("Feedback"), -ends_with(c("Real", "Fake")), -Experiment_Enjoyment) |>
+  pivot_longer(everything(), names_to = "Question", values_to = "Answer") |>
+  group_by(Question, Answer) |> 
+  summarise(prop = n()/nrow(df), .groups = 'drop') |> 
+  complete(Question, Answer, fill = list(prop = 0)) |> 
+  filter(Answer == "TRUE") |> 
+  mutate(Question = str_remove(Question, "Feedback_"),
+         Question = str_replace(Question, "Feedback_LabelsNotCorrect", "Labels were Incorrect"),
+         Question = str_replace(Question, "Feedback_LabelsReversed", "Labels were Reversed"),
+         Question = str_replace(Question, "Feedback_NoDifferenceRealAI", "No Difference Real/AI"),
+         Question = str_replace(Question, "Feedback_BigDifferenceRealAI", "Big difference Real/AI"),
+         Question = str_replace(Question, "Feedback_SmallDifferenceRealAI", "Small difference Real/AI"),
+         Question = str_replace(Question, "Feedback_LabelsAllPhotos", "All Faces were photographs"),
+         Question = str_replace(Question, "Feedback_LabelsAllAI", "All Faces were AI-generated")) |>
+  mutate(Question = fct_reorder(Question, desc(prop))) |> 
+  ggplot(aes(x = Question, y = prop, fill = Question)) +
+  # scale_fill_manual(values=c("#4CAF50", "#8BC34A", "#CDDC39", "#FF9800", "#F44336", "#3242a8", "#8332a8")) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(expand = c(0, 0), breaks= scales::pretty_breaks(), labels=scales::percent) +
+  labs(x="Feedback", y = "Participants", title = "Feedback") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = rel(1.2), face = "bold", hjust = 0),
+    plot.subtitle = element_text(size = rel(1.2), vjust = 7),
+    axis.text.y = element_text(size = rel(1.1)),
+    axis.text.x = element_text(size = rel(1.1), angle = 45, hjust = 1),
+    axis.title.x = element_blank(),
+    legend.position = "none"
+  )
+
+
+```
+
+
+## Exclusions
+
+```{r}
+#| echo: true
+#| code-fold: false
+
+outliers <- list()
+```
+
+### Age
+
+```{r}
+
+outliers$age <- filter(df, Age >=95 | Age < 18 )$Participant
+
+```
+
+we removed `r length(outliers$age)` participants whose ages were under 18 or above 95, as these values were unlikely given our undergraduate sample.
+
+```{r}
+df <- filter(df, !Participant %in% outliers$age)
+dftask <- filter(dftask, !Participant %in% outliers$age)
+```
+
+### Mobile
+
+```{r}
+df |>
+  ggplot(aes(x=Mobile)) +
+  geom_bar() +
+  theme_modern() +
+  scale_y_continuous(expand=c(0, 0))
+```
+
+There were `r sum(df$Mobile=="true")` participants that used a mobile device.
+
+### Invalid Responses
+
+```{r}
+outliers$invalid <- dftask |>
+  group_by(Participant) |>
+  summarize(Mean_Attractiveness = mean(Attractiveness),
+            SD_Attractiveness = sd(Attractiveness),
+            N_Attractiveness = length(unique(Attractiveness)),
+            SD_Symmetry = sd(Symmetry),
+            SD_Beauty = sd(Beauty)) |> 
+  arrange(N_Attractiveness) |>
+  filter(SD_Attractiveness == 0 | SD_Symmetry == 0 | SD_Beauty == 0) 
+
+# gt::gt(outliers$invalid)
+
+outliers$invalid <- outliers$invalid$Participant
+```
+
+`r length(outliers$invalid)` participants had no variation in their responses.
+
+### Experiment Duration
+
+The experiment's median duration is `r insight::format_value(median(df$Experiment_Duration))` min (`r insight::format_ci(bayestestR::hdi(df$Experiment_Duration, ci=0.5))`).
+
+```{r}
+#| fig-width: 15
+#| fig-height: 15
+
+df |>
+  mutate(Participant = fct_reorder(Participant, Experiment_Duration),
+         Category = ifelse(Experiment_Duration > 60, "extra", "ok"),
+         Duration = ifelse(Experiment_Duration > 60, 60, Experiment_Duration),
+         Group = ifelse(Participant %in% outliers, "Outlier", "ok")) |>
+  ggplot(aes(y = Participant, x = Duration)) +
+  geom_point(aes(color = Group, shape = Category)) +
+  geom_vline(xintercept = median(df$Experiment_Duration), color = "red", linetype = "dashed") +
+  geom_vline(xintercept = 15, color = "orange", linetype = "dotted") +
+  scale_shape_manual(values = c("extra" = 3, ok = 19)) +
+  scale_color_manual(values = c("Outlier" = "red", ok = "black"), guide="none") +
+  guides(color = "none", shape = "none") +
+  ggside::geom_xsidedensity(fill = "#4CAF50", color=NA) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  labs(
+    title = "Experiment Completion Time",
+    x = "Duration (in minutes)",
+    y = "Participants"
+  )  +
+  theme_minimal() +
+  ggside::theme_ggside_void() +
+  theme(ggside.panel.scale = .3,
+        panel.border = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+outliers$expe_duration <- filter(df, Experiment_Duration < 15)$Participant
+```
+
+We removed `r length(outliers$expe_duration)` participants for completing the experiment under 15 minutes. 
+
+```{r}
+df <- filter(df, !Participant %in% outliers$expe_duration)
+dftask <- filter(dftask, !Participant %in% outliers$expe_duration)
+```
+
+## Final Sample
+
+### Age
+
+```{r}
+p_age <- estimate_density(df$Age) |>
+  normalize(select = y) |>
+  mutate(y = y * 86) |>  # To match the binwidth
+  ggplot(aes(x = x)) +
+  geom_histogram(data=df, aes(x = Age, fill=Gender), bins=50 ) +
+  # geom_line(aes(y = y), color = "orange", linewidth=2) +
+  geom_vline(xintercept = mean(df$Age), color = "red", linewidth=1) +
+  # geom_label(data = data.frame(x = mean(df$Age) * 1.15, y = 0.95 * 75), aes(y = y), color = "red", label = paste0("Mean = ", format_value(mean(df$Age)))) +
+  scale_fill_manual(values = c("Man"= "#64B5F6", "Woman"= "#F06292", "Non-binary"="orange", "Prefer not to say" = "#73a832" )) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(title = "Age", y = "Number of Participants", color = NULL, subtitle = "Distribution of participants' age") +
+  theme_modern(axis.title.space = 10) +
+  theme(
+    plot.title = element_text(size = rel(1.2), face = "bold", hjust = 0),
+    plot.subtitle = element_text(size = rel(1.2), vjust = 7),
+    axis.text.y = element_text(size = rel(1.1)),
+    axis.text.x = element_text(size = rel(1.1)),
+    axis.title.x = element_blank()
+  )
+p_age
+```
+
+### Sexual Profile
+
+```{r p_demographics_sexprofile}
+#| fig-width: 14
+#| fig-height: 14
+
+df |>
+  mutate(SexualOrientation = fct_relevel(SexualOrientation, "Heterosexual", "Homosexual", "Bisexual", "Asexual", "Pansexual", "Queer", "Prefer not to say")) |>
+  ggplot(aes(x = SexualOrientation)) +
+  geom_bar(aes(fill=Gender)) +
+  scale_y_continuous(expand = c(0, 0), breaks= scales::pretty_breaks()) +
+  scale_fill_manual(values = c("Man"= "#64B5F6", "Woman"= "#F06292", "Non-binary"="orange", "Prefer not to say" = "#73a832")) +
+  labs(title = "Sexual Orientation of Participants") +
+  theme_modern(axis.title.space = 15) +
+  theme(
+    plot.title = element_text(size = rel(1.2), face = "bold", hjust = 0),
+    plot.subtitle = element_text(size = rel(1.2), vjust = 7),
+    axis.text.y = element_text(size = rel(1.1)),
+    axis.text.x = element_text(size = rel(1.1), angle = 45, hjust = 1),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  )
+```
+
+### Summary
+
+The final sample includes `r report::report_participants(df, age="Age", sex="Sex", education="Education", race = "Ethnicity")`. Out of these `r sum(df$SexualOrientation=="Heterosexual")` participants self-described as Heterosexual, `r sum(df$SexualOrientation=="Homosexual")` as Homosexual, 
+`r sum(df$SexualOrientation=="Bisexual")` as Bisexual,  `r sum(df$SexualOrientation=="Asexual")` as Asexual, `r sum(df$SexualOrientation=="Pansexual")` as Pansexual,  `r sum(df$SexualOrientation=="Queer ")` as Queer and `r sum(df$SexualOrientation=="Prefer not to say")` prefer not to describe their sexual orientation. 
+
+## Undergraduates dataset
+
+### Proportions of faces judged as real
+
+```{r}
+reality <- dftask |>
+  mutate(JudgedReal = Reality > 0) |>
+  group_by(Participant) |>
+  summarise(ProportionReal = mean(JudgedReal, na.rm = TRUE))
+
+dftask |>
+    mutate(
+    RealitySign = case_when(
+      Reality < -0.5 ~ "Negative",
+      Reality > 0.5 ~ "Positive",
+      Reality == 0 ~ "No Belief")) |>
+  ggplot(aes(x = Reality, fill = RealitySign)) +
+  geom_histogram(bins = 100, color = "black") +
+  scale_fill_manual(values = c("Negative" = "#2196F3", "Positive" = "#F44336", "No Belief" = "grey")) +
+  theme_minimal() +
+  theme(axis.title.y = element_blank()) 
+```
+
+### Ratings
+
+```{r}
+ratings <- dftask |>
+  group_by(Participant) |>
+  summarise(Mean_Attractiveness = mean(Attractiveness, na.rm = TRUE),
+            Mean_Beauty = mean(Beauty, na.rm = TRUE),
+            Mean_Symmetry = mean(Symmetry, na.rm = TRUE))
+```
+
+
+### 
+
+```{r}
+
+data_final <- df |>
+  select(Participant, Age, Gender, SexualOrientation, Ethnicity, MIST_totalcorrect, BAIT_total, BRS_Total, Questionnaires_AttentionCheck, Task_AttentionCheck) |>
+  full_join(ratings,by = join_by(Participant))
+
+```
+
+## Save
+
+```{r}
+#| code-fold: false
+
+write.csv(df, "../data/data_participants.csv", row.names = FALSE)
+write.csv(dftask, "../data/data_task.csv", row.names = FALSE)
+write.csv(data_final, "../data/data_undergraduates", row.names = FALSE)
+```
+
