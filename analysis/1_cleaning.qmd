@@ -1,5 +1,5 @@
 ---
-title: "1_Cleaning"
+title: "FakeFace3 - Data Cleaning"
 editor: source
 editor_options: 
   chunk_output_type: console
@@ -281,7 +281,7 @@ The final sample includes `r report::report_participants(df, age="Age", sex="Sex
 reality <- dftask |>
   mutate(JudgedReal = Reality > 0) |>
   group_by(Participant) |>
-  summarise(ProportionReal = mean(JudgedReal, na.rm = TRUE))
+  summarise(ProportionReal = mean(JudgedReal, na.rm = TRUE)) 
 
 dftask |>
     mutate(
@@ -301,9 +301,24 @@ dftask |>
 ```{r}
 ratings <- dftask |>
   group_by(Participant) |>
-  summarise(Mean_Attractiveness = mean(Attractiveness, na.rm = TRUE),
+    summarise(Mean_Attractiveness = mean(Attractiveness, na.rm = TRUE),
             Mean_Beauty = mean(Beauty, na.rm = TRUE),
             Mean_Symmetry = mean(Symmetry, na.rm = TRUE))
+  
+
+ratings |>
+  rename(Attractiveness = "Mean_Attractiveness", 
+         Beauty = "Mean_Beauty",
+         Symmetry = "Mean_Symmetry") |>
+  pivot_longer(
+    cols = c(Attractiveness, Beauty, Symmetry),
+    names_to = "RatingType",
+    values_to = "Mean"
+  )|>
+  ggplot(aes(x = Mean, fill = RatingType)) +
+  geom_density(alpha = 0.7) +
+  theme_minimal() +
+  labs(x = "Mean Scores")
 ```
 
 
@@ -313,8 +328,13 @@ ratings <- dftask |>
 
 data_final <- df |>
   select(Participant, Age, Gender, SexualOrientation, Ethnicity, MIST_totalcorrect, BAIT_total, BRS_Total, Questionnaires_AttentionCheck, Task_AttentionCheck) |>
-  full_join(ratings,by = join_by(Participant))
+  full_join(ratings,by = join_by(Participant))  |>
+ arrange(as.numeric(gsub("\\D", "", Participant))) |>
+  mutate(
+    Participant = str_c("S", str_pad(row_number(), 3, pad = "0")))
+  
 
+head(data_final) |> gt::gt()
 ```
 
 ## Save
@@ -324,6 +344,6 @@ data_final <- df |>
 
 write.csv(df, "../data/data_participants.csv", row.names = FALSE)
 write.csv(dftask, "../data/data_task.csv", row.names = FALSE)
-write.csv(data_final, "../data/data_undergraduates", row.names = FALSE)
+write.csv(data_final, "../data/data_undergraduates.csv", row.names = FALSE)
 ```
 
