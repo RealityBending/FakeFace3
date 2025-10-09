@@ -327,11 +327,15 @@ ratings |>
 ```{r}
 
 data_final <- df |>
-  select(Participant, Age, Gender, SexualOrientation, Ethnicity, MIST_totalcorrect, BAIT_total, BRS_Total, Questionnaires_AttentionCheck, Task_AttentionCheck) |>
+  select(Participant, Age, Gender, SexualOrientation, Ethnicity, MIST_totalcorrect, BAIT_total, BRS_Total, Questionnaires_AttentionCheck) |>
   full_join(ratings,by = join_by(Participant))  |>
  arrange(as.numeric(gsub("\\D", "", Participant))) |>
   mutate(
-    Participant = str_c("S", str_pad(row_number(), 3, pad = "0")))
+    Participant = str_c("S", str_pad(row_number(), 3, pad = "0")),
+    Gender = sample(Gender),
+    SexualOrientation = sample(SexualOrientation),
+    Ethnicity = sample(Ethnicity),
+    Age = sample(Age))
   
 
 head(data_final) |> gt::gt()
