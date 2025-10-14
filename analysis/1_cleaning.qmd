@@ -24,32 +24,16 @@ library(ggside)
 
 ```{r}
 
-df <-read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace3/refs/heads/main/data/rawdata_participants.csv") |>
-  mutate(Gender = case_when(
-           Gender == "Female" ~ "Woman",
-           Gender == "Male" ~ "Man",
-           Gender == "Genderfluid" ~ "Non-binary",
-           TRUE ~ Gender),
-         SexualOrientation = case_when(
-           SexualOrientation == "asexual" ~ "Asexual",
-           SexualOrientation == "queer" ~ "Queer",
-            is.na(SexualOrientation) ~ "Prefer not to say",
-           TRUE ~ SexualOrientation),
-         Ethnicity = case_when(
-           Ethnicity == "portuguese" ~ "White",
-           Ethnicity == "latino (brazilian) and white (portuguese)" ~ "Mixed",
-           Ethnicity == "middle eastern/ european" ~ "Mixed",
-         TRUE ~ Ethnicity)
-         ) 
+df <-read.csv("../data/rawdata_participants.csv") 
 
-dftask <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace3/refs/heads/main/data/rawdata_task.csv") |>
+dftask <- read.csv("../data/rawdata_task.csv") |>
   full_join(
     df[c("Participant", "Gender", "SexualOrientation")],
     by= join_by("Participant")
   ) |>
   mutate(Condition = ifelse(Condition == "Reality", "Photograph", "AI-Generated")) 
 
-dftask <- filter(dftask, Participant %in% unique(df$Participant))
+# dftask <- filter(dftask, Participant %in% unique(df$Participant))
 ```
 
 The initial sample consisted of `r report::report_participants(df, age="Age", gender="Gender", education="Education", race = "Ethnicity")`, for a total trial number of `r nrow(dftask)`.
@@ -115,6 +99,37 @@ df |>
 
 ```
 
+## Score Computation
+
+### BAIT
+
+```{r}
+# df$BAIT_Total <- df |> 
+#   select(starts_with("BAIT_"), -BAIT_AttentionCheck, -BAIT_AI_Use, -BAIT_AI_Knowledge) |>
+#   # Reverse
+#   mutate(BAIT_2_ImagesIssues = 6 - BAIT_2_ImagesIssues,
+#          BAIT_3_VideosIssues = 6 - BAIT_3_VideosIssues,
+#          BAIT_8_TextIssues   = 6 - BAIT_8_TextIssues,
+#          BAIT_13_ArtIssues   = 6 - BAIT_13_ArtIssues,
+#          BAIT_9_Dangerous    = 6 - BAIT_9_Dangerous,
+#          BAIT_10_Worry       = 6 - BAIT_10_Worry) |>
+#   rowMeans(na.rm = TRUE)
+```
+
+### MIST
+
+```{r}
+df <- df |> 
+  select(Participant, starts_with("MIST_")) |> 
+  pivot_longer(-Participant, names_to = "Item", values_to = "Response") |> 
+  separate(Item, into = c("MIST", "nature", "type", "item"), sep = "_") |>
+  summarize(MIST_p_True = sum(Response >= 0) / n(), .by="Participant") |> 
+  left_join(df, by = join_by("Participant")) 
+```
+
+### BRS
+
+TODO.
 
 ## Exclusions
 
@@ -124,6 +139,20 @@ df |>
 
 outliers <- list()
 ```
+
+### Attention Checks
+
+```{r}
+
+# bait$BAIT_AttentionCheck <- ifelse(bait$BAIT_AttentionCheck %in% c(5, 6), 1, 0)
+# 
+#   BRS$BRS_Attention <- ifelse(BRS$BRS_Attention %in% c(1, 2), 1, 0)
+#   
+#     ## Attention checks
+# 
+#   data_ppt$Questionnaires_AttentionCheck <- (bait$BAIT_AttentionCheck + BRS$BRS_Attention)/2
+```
+
 
 ### Age
 

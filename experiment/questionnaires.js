@@ -201,21 +201,21 @@ const questionnaire_MIST = {
     },
 }
 
-// Bullshit receptive scale (BRS)
+// Bullshit receptivity scale (BRS)
 // Pennycook et al., 2015
 // https://doi:10.1017/S1930297500006999
 
 const BRS_items = {
-    BRS_1: "Hidden meaning transforms unparalleled abstract beauty",
-    BRS_2: "Good health imparts reality to subtle creativity",
-    BRS_3: "Wholeness quiets infinite phenomena",
-    BRS_4: "The future explains irrational facts",
-    BRS_5: "Imagination is inside exponential space time events",
-    BRS_6: "We are in the midst of a self-aware blossoming of being that will align us with the nexus itself",
-    BRS_7: "Consciousness consists of frequencies of quantum energy. “Quantum” means an unveiling of the unrestricted",
-    BRS_8: "Consciousness is the growth of coherence, and of us",
-    BRS_9: "We are in the midst of a high-frequency blossoming of interconnectedness that will give us access to the quantum soup itself",
-    BRS_10: "Today, science tells us that the essence of nature is joy",
+    BRS_1: "Hidden meaning transforms unparalleled abstract beauty.",
+    BRS_2: "Good health imparts reality to subtle creativity.",
+    BRS_3: "Wholeness quiets infinite phenomena.",
+    BRS_4: "The future explains irrational facts.",
+    BRS_5: "Imagination is inside exponential space time events.",
+    BRS_6: "We are in the midst of a self-aware blossoming of being that will align us with the nexus itself.",
+    BRS_7: "Consciousness consists of frequencies of quantum energy. 'Quantum' means an unveiling of the unrestricted.",
+    BRS_8: "Consciousness is the growth of coherence, and of us.",
+    BRS_9: "We are in the midst of a high-frequency blossoming of interconnectedness that will give us access to the quantum soup itself.",
+    BRS_10: "Today, science tells us that the essence of nature is joy.",
     // Below are the 10 "control" prototypically profound items from Pennycook et al. (2015)
     BRS_11: "Your teacher can open the door, but you must enter by yourself.",
     BRS_12: "The creative adult is the child who survived.",
@@ -227,7 +227,7 @@ const BRS_items = {
     BRS_18: "Forgiveness means letting go of the hope for a better past.",
     BRS_19: "Only those who will risk going too far can possibly find out how far one can go.",
     BRS_20: "I wonder how many people I've looked at all my life and never seen.",
-    BRS_Attention: "Wholeness is found in simple choices, select all the way to the left to show you are paying attention",
+    BRS_Attention: "Wholeness is found in simple choices, select all the way to the left to show you are paying attention.",
 }
 
 function make_BRS(items) {
